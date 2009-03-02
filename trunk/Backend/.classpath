@@ -6,6 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Filip/Desktop/programmering/CS448/Project/Backend/src/ncluster-jdbc-driver.jar"/>
+	<classpathentry kind="lib" path="libs/ncluster-jdbc-driver.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
