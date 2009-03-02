@@ -4,13 +4,16 @@ package {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.text.TextField;
+	import flash.ui.Keyboard;
 
 	[SWF(width="850", height="600", backgroundColor="#ffffff", frameRate="30")]
 	
 	public class Visualization extends Sprite
 	{
 		private var conn:ConnectionHandler;
+		private var searchBox:TextField;
 		
 		public function Visualization()
 		{
@@ -28,7 +31,26 @@ package {
 			conn.setUpDatabase("67.202.59.214", "cs345a", "cs345a", "netflix");
 			conn.Connect();
 			
+			//  search
+			searchBox = new TextField();
+			searchBox.addEventListener(KeyboardEvent.KEY_DOWN, updateSearch);
+			
+			
+			// -------------------
+			
+			
+			
 			//stage.addEventListener(Event.REMOVED,appClosed);
+			
+			
+		}
+		
+		public function updateSearch(kevt:KeyboardEvent):void{
+			
+			if (kevt.keyCode != Keyboard.ENTER) {
+				return;
+			}
+			
 			
 			
 		}
