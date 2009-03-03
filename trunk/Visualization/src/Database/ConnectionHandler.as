@@ -16,6 +16,7 @@ package Database
 		private var Login:String = ""; // database login
 		private var Password:String = ""; // database password
 		private var Command:String = ""; // SQL command to be sent to the database
+		private var movieSearch:String = "";
 		private var DbName:String = ""; // database name
 		private var AppIPAddr:String = ""; // Java application server IP address or DSN name
 		private var XMLSck:XMLSocket = new XMLSocket();
@@ -125,10 +126,11 @@ package Database
 		  * were multithreaded, the if( XMLSck.connect ) ... block 
 		  * could be replaced by XMLSck.send( ... )
 		  *********************************************************/
-		  public function SendCommand():void{
+		  public function SendCommand(command:String):void{
 			
+			Command = command;
 			  
-			if( Connected && HConnection != -1 ){
+			if( Connected){// && HConnection != -1 ){
 				outgoingData = XMLCreateCommand();
 				
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
@@ -140,10 +142,28 @@ package Database
 			  
 		  }
 		  
+		  public function search(command:String):void{
+		  	
+		  	movieSearch= command;
+		  	
+		  	if( Connected){// && HConnection != -1 ){
+				outgoingData = XMLCreateSearch();
+				
+				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
+					  traceAlert( "Not connected." ); 
+				}
+			}else{
+				  traceAlert("Not connected." );
+			}
+		  	
+		  }
+		  
+		  
+		  
 		  /*************************
 		   * XMLCreateCommand
 		   *************************/
-		   public function XMLCreateCommand():String {
+		   private function XMLCreateCommand():String {
 			   
 			   var xmlDoc:XMLDocument = new XMLDocument();
 			   var node1:XMLNode = xmlDoc.createElement( "flashCommand" );
@@ -165,10 +185,33 @@ package Database
 			   return s;
 		   }
 		   
+		   private function XMLCreateSearch():String {
+		   	   
+		   	   var xmlDoc:XMLDocument = new XMLDocument();
+			   var node1:XMLNode = xmlDoc.createElement( "search" );
+			   var node2:XMLNode;
+			   var node3:XMLNode;
+			   
+			   xmlDoc.appendChild( node1 ); 
+			   node2 = xmlDoc.createElement( "movieSearch" );
+			   node1.appendChild( node2 );
+			   node3 = xmlDoc.createTextNode( movieSearch );
+			   node2.appendChild( node3 );
+			   
+		   	   node2 = xmlDoc.createElement( "Connection" );
+			   node1.appendChild( node2 );
+			   node3 = xmlDoc.createTextNode( HConnection.toString());
+			   node2.appendChild( node3 );
+			   
+			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+			   return s;
+		   	
+		   }
+		   
 		  /*************************
 		   * XMLCreateLogon
 		   *************************/
-		   public function XMLCreateLogon():String {	   
+		   private function XMLCreateLogon():String {	   
 			   var xmlDoc:XMLDocument = new XMLDocument();
 			   var node1:XMLNode = xmlDoc.createElement ( "flashLogon" );
 			   var node2:XMLNode;
