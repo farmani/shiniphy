@@ -1,1 +1,1 @@
-<flashLogon><IPAddr>67.202.59.214</IPAddr><Login>cs345a</Login><Password>cs345a</Password><Database>netflix</Database></flashLogon>
+<flashCommand><Command>SELECT 2+2</Command><Connection>-1</Connection></flashCommand>
