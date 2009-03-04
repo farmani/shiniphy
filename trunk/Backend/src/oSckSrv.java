@@ -218,6 +218,7 @@ public class oSckSrv {
 						if( nodeName.compareTo( "Database" ) == 0 )
 							Database = nodeValue;
 					}
+					
 				}
 				return oSckSrv._LOGON;
 			}else{
