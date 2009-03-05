@@ -80,12 +80,18 @@ public class oSckSrv {
 				System.out.println( "\tRead: '" + msg + "'" );
 
 				int recievedMsg = parseReceivedXML( msg );
-				if(recievedMsg == oSckSrv._LOGON){
+				if(recievedMsg == oSckSrv._LOGON || (connections.size() == 0 && recievedMsg != oSckSrv._UNKNOWN)){
 
 					// a login request has been received
 					// use the dbConn class to attempt connecting to the database
 					// if successful, add the connection information to the
 					// connections collection
+					//if( nodeName.compareTo( "IPAddr" ) == 0 )
+					
+					IPAddr = "174.129.187.48";
+					Login = "psi";
+					Password = "pass19wd";
+					Database = "psi";
 
 					dbConn newConnection = new dbConn(IPAddr, Login, Password, Database);
 					int tConn = newConnection.getConnection();
@@ -101,7 +107,9 @@ public class oSckSrv {
 						System.out.println( "\tConnection cannot be granted: " + newConnection.getError());
 					
 					
-				}else if(recievedMsg == oSckSrv._COMMAND || recievedMsg == oSckSrv._SEARCH){
+				}
+				
+				if(recievedMsg == oSckSrv._COMMAND || recievedMsg == oSckSrv._SEARCH){
 
 					// a command has been received; if it is not a 'disconnect'' command,
 					// determine the connection that the command is intended for,
@@ -126,10 +134,11 @@ public class oSckSrv {
 								System.out.println( "\tResult: '" + Output + "'");
 								outo.println( Output );
 							}
-			 			}else{
+			 			}else if(recievedMsg == oSckSrv._SEARCH){
 			 				//
-			 				@SuppressWarnings("unused")
-							float egon = 0;
+			 				Output = currentConnection.Search("SELECT movieid, title FROM searchstring(ON movie_titles SEARCHFOR('" + movieSearch + "')) ORDER BY closeness LIMIT 10");
+							System.out.println( "\tResult: '" + Output + "'");
+							outo.println( Output );
 			 				
 			 			}
 					}
@@ -197,29 +206,11 @@ public class oSckSrv {
 			if( sRoot.compareTo( "flashLogon" ) ==0 ){
 
 				System.out.println( "\tLogon request:");
-				NodeList list = oRoot.getChildNodes();
-				for( int i = 0; i < list.getLength(); i++){
-
-					Node n = list.item( i );
-					String nodeName = n.getNodeName();
-					System.out.println( "\t-" + nodeName );
-					if( n.getNodeType() == Node.ELEMENT_NODE ){
-
-						Node inner = n.getFirstChild();
-						String nodeValue = inner.getNodeValue();
-						System.out.println( "\t\t'" + nodeValue + "'" );
-
-						if( nodeName.compareTo( "IPAddr" ) == 0 )
-							IPAddr = nodeValue;
-						if( nodeName.compareTo( "Login" ) == 0 )
-							Login = nodeValue;
-						if( nodeName.compareTo( "Password" ) == 0 )
-							Password = nodeValue;
-						if( nodeName.compareTo( "Database" ) == 0 )
-							Database = nodeValue;
-					}
-					
-				}
+				
+				// ./act -h 174.129.187.48 -U psi -w pass19wd -d psi
+				
+				
+				
 				return oSckSrv._LOGON;
 			}else{
 				if( sRoot.compareTo( "flashCommand" ) ==0 ){
