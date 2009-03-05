@@ -214,29 +214,29 @@ package Database
 		   private function XMLCreateLogon():String {	   
 			   var xmlDoc:XMLDocument = new XMLDocument();
 			   var node1:XMLNode = xmlDoc.createElement ( "flashLogon" );
-			   var node2:XMLNode;
-			   var node3:XMLNode;
-			   
+//			   var node2:XMLNode;
+//			   var node3:XMLNode;
+//			   
 			   xmlDoc.appendChild( node1 ); 
-			   node2 = xmlDoc.createElement( "IPAddr" ); //this is the Db IP Addr
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( DbIPAddr );
-			   node2.appendChild( node3 );
-			   
-			   node2 = xmlDoc.createElement( "Login" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( Login );
-			   node2.appendChild( node3 );
-		
-			   node2 = xmlDoc.createElement( "Password" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( Password );
-			   node2.appendChild( node3 );
-			   
-			   node2 = xmlDoc.createElement( "Database" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( DbName );
-			   node2.appendChild( node3 );	
+//			   node2 = xmlDoc.createElement( "IPAddr" ); //this is the Db IP Addr
+//			   node1.appendChild( node2 );
+//			   node3 = xmlDoc.createTextNode( DbIPAddr );
+//			   node2.appendChild( node3 );
+//			   
+//			   node2 = xmlDoc.createElement( "Login" );
+//			   node1.appendChild( node2 );
+//			   node3 = xmlDoc.createTextNode( Login );
+//			   node2.appendChild( node3 );
+//		
+//			   node2 = xmlDoc.createElement( "Password" );
+//			   node1.appendChild( node2 );
+//			   node3 = xmlDoc.createTextNode( Password );
+//			   node2.appendChild( node3 );
+//			   
+//			   node2 = xmlDoc.createElement( "Database" );
+//			   node1.appendChild( node2 );
+//			   node3 = xmlDoc.createTextNode( DbName );
+//			   node2.appendChild( node3 );	
 			   
 			    var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
 			   return s; 

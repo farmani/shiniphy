@@ -30,7 +30,7 @@ package {
 			conn = new ConnectionHandler("127.0.0.1");
 			
 			// ./act -h 174.129.187.48 -U psi -w pass19wd -d psi
-			conn.setUpDatabase("174.129.187.48", "psi", "pass19wd", "psi");
+			//conn.setUpDatabase("174.129.187.48", "psi", "pass19wd", "psi");
 			conn.Connect();
 			
 			//  search
@@ -58,8 +58,8 @@ package {
 			if (kevt.keyCode != Keyboard.ENTER) {
 				return;
 			}
-			conn.SendCommand("SELECT 2+2");
-			//conn.search(searchBox.text);
+			//conn.SendCommand("SELECT 2+2");
+			conn.search(searchBox.text);
 			
 			
 			
