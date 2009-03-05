@@ -133,6 +133,31 @@ public class dbConn {
 		return "<" + TypeOfReturn + Return + "</" + TypeOfReturn + "\0";
 			// '\0' required by Flash
 	}
+	
+	public String Search( String command ){
+		String Return = "";
+		String TypeOfReturn = "Search>\n";
+		try{
+			//Connect();
+			Statement dbStatement = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_READ_ONLY );
+			//DatabaseMetaData m = conn.getMetaData();
+			//m.getColumns();
+
+			ResultSet dbResults = dbStatement.executeQuery( command );
+
+			while( dbResults.next()){
+				Return += "\t<movie>\n\t\t<id>" + dbResults.getString( 1 ) + "</id>\n\t\t<name>\"" +dbResults.getString( 2 )+ "\"</name>\n\t</movie>\n";
+				// very simple results processing...
+			}
+		}catch( Exception x ){
+			Return = x.toString();
+			Error = x.toString();
+			TypeOfReturn = "Error>";
+		}
+		return "<" + TypeOfReturn + Return + "</" + TypeOfReturn + "\0";
+			// '\0' required by Flash
+	}
 
 
 	/********************************
