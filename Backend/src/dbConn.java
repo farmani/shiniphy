@@ -158,6 +158,24 @@ public class dbConn {
 		return "<" + TypeOfReturn + Return + "</" + TypeOfReturn + "\0";
 			// '\0' required by Flash
 	}
+	
+	// just downloads the full list of movies
+	public ResultSet getFullMovieList(){
+		
+		try{
+			//Connect();
+			Statement dbStatement = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_READ_ONLY );
+			//DatabaseMetaData m = conn.getMetaData();
+			//m.getColumns();
+
+			return dbStatement.executeQuery("select movieid, title from movie_titles");
+
+		}catch( Exception x ){
+			return null;
+		}
+
+	}
 
 
 	/********************************

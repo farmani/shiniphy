@@ -35,18 +35,6 @@ package Database
 			
 		}
 		
-		public function setUpDatabase(ip:String, username:String, password:String, dbName:String):void{
-			
-			if(Connected)
-				Disconnect();
-				
-				
-			DbIPAddr = ip;
-			Login = username;
-			Password = password;
-			DbName = dbName;
-		}
-		
 		/****************************************** 
 		 * Connect
 		 * Two step process
@@ -175,12 +163,7 @@ package Database
 			   node1.appendChild( node2 );
 			   node3 = xmlDoc.createTextNode( Command );
 			   node2.appendChild( node3 );
-			   
-		   	   node2 = xmlDoc.createElement( "Connection" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( HConnection.toString());
-			   node2.appendChild( node3 );
-			   
+			   			   
 			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
 			   return s;
 		   }
@@ -197,52 +180,30 @@ package Database
 			   node1.appendChild( node2 );
 			   node3 = xmlDoc.createTextNode( movieSearch );
 			   node2.appendChild( node3 );
-			   
-		   	   node2 = xmlDoc.createElement( "Connection" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( HConnection.toString());
-			   node2.appendChild( node3 );
+			
 			   
 			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
 			   return s;
 		   	
 		   }
 		   
-		  /*************************
-		   * XMLCreateLogon
-		   *************************/
-		   private function XMLCreateLogon():String {	   
-			   var xmlDoc:XMLDocument = new XMLDocument();
-			   var node1:XMLNode = xmlDoc.createElement ( "flashLogon" );
-//			   var node2:XMLNode;
-//			   var node3:XMLNode;
-//			   
-			   xmlDoc.appendChild( node1 ); 
-//			   node2 = xmlDoc.createElement( "IPAddr" ); //this is the Db IP Addr
-//			   node1.appendChild( node2 );
-//			   node3 = xmlDoc.createTextNode( DbIPAddr );
-//			   node2.appendChild( node3 );
-//			   
-//			   node2 = xmlDoc.createElement( "Login" );
-//			   node1.appendChild( node2 );
-//			   node3 = xmlDoc.createTextNode( Login );
-//			   node2.appendChild( node3 );
-//		
-//			   node2 = xmlDoc.createElement( "Password" );
-//			   node1.appendChild( node2 );
-//			   node3 = xmlDoc.createTextNode( Password );
-//			   node2.appendChild( node3 );
-//			   
-//			   node2 = xmlDoc.createElement( "Database" );
-//			   node1.appendChild( node2 );
-//			   node3 = xmlDoc.createTextNode( DbName );
-//			   node2.appendChild( node3 );	
+		    private function XMLCreateLogon():String {
 			   
-			    var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
-			   return s; 
-			   // be careful this also appends a \0 which needs to be processed
-			   // if multiple reads are performed against the same stream in Java
+			   var xmlDoc:XMLDocument = new XMLDocument();
+			   var node1:XMLNode = xmlDoc.createElement( "logon" );
+			   var node2:XMLNode;
+			   var node3:XMLNode;
+			   
+			   xmlDoc.appendChild( node1 ); 
+			   node2 = xmlDoc.createElement( "message" );
+			   node1.appendChild( node2 );
+			   node3 = xmlDoc.createTextNode( "Hey what's up?" );
+			   node2.appendChild( node3 );
+			   			   
+			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+			   return s;
 		   }
+		   
 		   
 		   /************************* 
 		    * traceAlert
@@ -268,7 +229,33 @@ package Database
 						}
 						xnode = xnode.nextSibling;
 					}	
+				}else if(xnode.nodeName == "Search"){
+					xnode = xnode.firstChild;
+					while( xnode != null ){
+						if( xnode.nodeName == "movie" ){
+							xnode = xnode.firstChild;
+							var id:int = parseInt(xnode.firstChild.nodeValue);
+							xnode = xnode.nextSibling;
+							var name:String = xnode.firstChild.nodeValue;
+							xnode = xnode.nextSibling;
+							var dist:int = parseInt(xnode.firstChild.nodeValue);
+							
+							xnode = xnode.parentNode;
+
+						}
+						xnode = xnode.nextSibling;
+					}			
 				}
 			 }
 	}
 }
+
+
+
+
+
+
+
+
+
+
