@@ -134,9 +134,12 @@ public class dbConn {
 			// '\0' required by Flash
 	}
 	
-	public String Search( String command ){
+	public String Search( String movieName ){
+		
+		String command = "SELECT movieid, title FROM searchstring(ON movie_titles SEARCHFOR('" + movieName + "')) ORDER BY closeness LIMIT 10";
+		
 		String Return = "";
-		String TypeOfReturn = "Search>\n";
+		String TypeOfReturn = "Search>";
 		try{
 			//Connect();
 			Statement dbStatement = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -147,7 +150,7 @@ public class dbConn {
 			ResultSet dbResults = dbStatement.executeQuery( command );
 
 			while( dbResults.next()){
-				Return += "\t<movie>\n\t\t<id>" + dbResults.getString( 1 ) + "</id>\n\t\t<name>\"" +dbResults.getString( 2 )+ "\"</name>\n\t</movie>\n";
+				Return += "<movie><id>" + dbResults.getString( 1 ) + "</id><name>" +dbResults.getString( 2 )+ "</name></movie>";
 				// very simple results processing...
 			}
 		}catch( Exception x ){
@@ -157,6 +160,47 @@ public class dbConn {
 		}
 		return "<" + TypeOfReturn + Return + "</" + TypeOfReturn + "\0";
 			// '\0' required by Flash
+	}
+	
+	public String getFullInfo(String id){
+		
+		// TODO: create query for getting all relevant information about a movie
+		String command = "";
+		
+		String Return = "";
+		String TypeOfReturn = "FullMovie>\n";
+		try{
+			
+			Statement dbStatement = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_READ_ONLY );
+
+			ResultSet dbResults = dbStatement.executeQuery( command );
+			
+			// TODO:   Add whatever data comes out of query
+
+			while( dbResults.next()){
+				Return += "\t<movieid></movieid>\n";
+				Return += "\t<title></title>\n";
+				Return += "\t<movieid></movieid>\n";
+				Return += "\t<movieid></movieid>\n";
+				Return += "\t<movieid></movieid>\n";
+				Return += "\t<movieid></movieid>\n";
+				Return += "\t<movieid></movieid>\n";
+				// very simple results processing...
+			}
+		}catch( Exception x ){
+			Return = x.toString();
+			Error = x.toString();
+			TypeOfReturn = "Error>";
+		}
+		return "<" + TypeOfReturn + Return + "</" + TypeOfReturn + "\0";
+		
+	}
+	
+	public String getAllSimilar(String command){
+		
+		// TODO create query for getting all similar movies
+		return "";
 	}
 	
 	// just downloads the full list of movies

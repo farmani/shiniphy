@@ -1,5 +1,7 @@
 package Database
 {
+	import Search.SearchMenu;
+	
 	import flash.display.Sprite;
 	import flash.events.DataEvent;
 	import flash.events.Event;
@@ -17,6 +19,8 @@ package Database
 		private var Password:String = ""; // database password
 		private var Command:String = ""; // SQL command to be sent to the database
 		private var movieSearch:String = "";
+		private var fullInfoId:String = "";
+		private var similarId:String = "";
 		private var DbName:String = ""; // database name
 		private var AppIPAddr:String = ""; // Java application server IP address or DSN name
 		private var XMLSck:XMLSocket = new XMLSocket();
@@ -24,6 +28,8 @@ package Database
 		private var HConnection:Number = -1; // connection handle
 		
 		private var outgoingData:String = "";
+		
+		private var searchMenu:SearchMenu = null; 
 		
 		public function ConnectionHandler(ipAddr:String)
 		{
@@ -102,6 +108,7 @@ package Database
 		  ************************/
 		 public function onSckReceive( retDoc: String ):void{
 			  traceAlert( "Receiving: " + retDoc );
+			  retDoc = retDoc.substr(retDoc.indexOf("data=")+6,retDoc.length - 8 - retDoc.indexOf("data="));
 			  var doc:XMLDocument = new XMLDocument( retDoc );
 			  ParseReturn( doc );
 		  }
@@ -130,8 +137,9 @@ package Database
 			  
 		  }
 		  
-		  public function search(command:String):void{
+		  public function search(searchMenu:SearchMenu, command:String):void{
 		  	
+		  	this.searchMenu = searchMenu;
 		  	movieSearch= command;
 		  	
 		  	if( Connected){// && HConnection != -1 ){
@@ -146,107 +154,181 @@ package Database
 		  	
 		  }
 		  
-		  
-		  
-		  /*************************
-		   * XMLCreateCommand
-		   *************************/
-		   private function XMLCreateCommand():String {
-			   
-			   var xmlDoc:XMLDocument = new XMLDocument();
-			   var node1:XMLNode = xmlDoc.createElement( "flashCommand" );
-			   var node2:XMLNode;
-			   var node3:XMLNode;
-			   
-			   xmlDoc.appendChild( node1 ); 
-			   node2 = xmlDoc.createElement( "Command" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( Command );
-			   node2.appendChild( node3 );
-			   			   
-			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
-			   return s;
-		   }
-		   
-		   private function XMLCreateSearch():String {
-		   	   
-		   	   var xmlDoc:XMLDocument = new XMLDocument();
-			   var node1:XMLNode = xmlDoc.createElement( "search" );
-			   var node2:XMLNode;
-			   var node3:XMLNode;
-			   
-			   xmlDoc.appendChild( node1 ); 
-			   node2 = xmlDoc.createElement( "movieSearch" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( movieSearch );
-			   node2.appendChild( node3 );
-			
-			   
-			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
-			   return s;
-		   	
-		   }
-		   
-		    private function XMLCreateLogon():String {
-			   
-			   var xmlDoc:XMLDocument = new XMLDocument();
-			   var node1:XMLNode = xmlDoc.createElement( "logon" );
-			   var node2:XMLNode;
-			   var node3:XMLNode;
-			   
-			   xmlDoc.appendChild( node1 ); 
-			   node2 = xmlDoc.createElement( "message" );
-			   node1.appendChild( node2 );
-			   node3 = xmlDoc.createTextNode( "Hey what's up?" );
-			   node2.appendChild( node3 );
-			   			   
-			   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
-			   return s;
-		   }
-		   
-		   
-		   /************************* 
-		    * traceAlert
-			*************************/
-			private function traceAlert( msg:String ):void{
-				trace( msg );
-			}
-			   
-			/************************* 
-			 * ParseReturn
-			 *************************/
-			private function ParseReturn( xmsg:XMLDocument ):void{  
-				var xnode:XMLNode;
-				xnode = xmsg.firstChild;
+		  public function fullInfo(movieId:Number):void{
+		  	
+		  	fullInfoId = movieId.toString();
+		  	
+		  	if( Connected){// && HConnection != -1 ){
+				outgoingData = XMLCreateFullInfo();
 				
-				if( xnode.nodeName == "Connection" ){
-					xnode = xnode.firstChild;
-					while( xnode != null ){
-						if( xnode.nodeName == "HConnection" ){
-							xnode = xnode.firstChild;
-							HConnection = parseInt(xnode.nodeValue);
-							break;
-						}
-						xnode = xnode.nextSibling;
-					}	
-				}else if(xnode.nodeName == "Search"){
-					xnode = xnode.firstChild;
-					while( xnode != null ){
-						if( xnode.nodeName == "movie" ){
-							xnode = xnode.firstChild;
-							var id:int = parseInt(xnode.firstChild.nodeValue);
-							xnode = xnode.nextSibling;
-							var name:String = xnode.firstChild.nodeValue;
-							xnode = xnode.nextSibling;
-							var dist:int = parseInt(xnode.firstChild.nodeValue);
-							
-							xnode = xnode.parentNode;
-
-						}
-						xnode = xnode.nextSibling;
-					}			
+				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
+					  traceAlert( "Not connected." ); 
 				}
-			 }
+			}else{
+				  traceAlert("Not connected." );
+			}
+			
+		  }
+		  
+		  public function findSimilar(movieId:Number):void{
+		  	
+		  	similarId = movieId.toString();
+		  	
+		  	if( Connected){// && HConnection != -1 ){
+				outgoingData = XMLCreateSimilar();
+				
+				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
+					  traceAlert( "Not connected." ); 
+				}
+			}else{
+				  traceAlert("Not connected." );
+			}
+			
+		  }		  
+		  
+	  /*************************
+	   * XMLCreateCommand
+	   *************************/
+	   private function XMLCreateCommand():String {
+		   
+		   var xmlDoc:XMLDocument = new XMLDocument();
+		   var node1:XMLNode = xmlDoc.createElement( "flashCommand" );
+		   var node2:XMLNode;
+		   var node3:XMLNode;
+		   
+		   xmlDoc.appendChild( node1 ); 
+		   node2 = xmlDoc.createElement( "Command" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( Command );
+		   node2.appendChild( node3 );
+		   			   
+		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+		   return s;
+	   }
+	   
+	   private function XMLCreateSearch():String {
+	   	   
+	   	   var xmlDoc:XMLDocument = new XMLDocument();
+		   var node1:XMLNode = xmlDoc.createElement( "search" );
+		   var node2:XMLNode;
+		   var node3:XMLNode;
+		   
+		   xmlDoc.appendChild( node1 ); 
+		   node2 = xmlDoc.createElement( "movieSearch" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( movieSearch );
+		   node2.appendChild( node3 );
+		
+		   
+		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+		   return s;
+	   	
+	   }
+
+	   private function XMLCreateFullInfo():String {
+	   	   
+	   	   var xmlDoc:XMLDocument = new XMLDocument();
+		   var node1:XMLNode = xmlDoc.createElement( "fullinfo" );
+		   var node2:XMLNode;
+		   var node3:XMLNode;
+		   
+		   xmlDoc.appendChild( node1 ); 
+		   node2 = xmlDoc.createElement( "movieId" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( fullInfoId );
+		   node2.appendChild( node3 );
+		
+		   
+		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+		   return s;
+	   	
+	   }		   
+
+
+	   private function XMLCreateSimilar():String {
+	   	   
+	   	   var xmlDoc:XMLDocument = new XMLDocument();
+		   var node1:XMLNode = xmlDoc.createElement( "similar" );
+		   var node2:XMLNode;
+		   var node3:XMLNode;
+		   
+		   xmlDoc.appendChild( node1 ); 
+		   node2 = xmlDoc.createElement( "movieId" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( similarId );
+		   node2.appendChild( node3 );
+		
+		   
+		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+		   return s;
+	   	
+	   }		   
+	   
+	    private function XMLCreateLogon():String {
+		   
+		   var xmlDoc:XMLDocument = new XMLDocument();
+		   var node1:XMLNode = xmlDoc.createElement( "logon" );
+		   var node2:XMLNode;
+		   var node3:XMLNode;
+		   
+		   xmlDoc.appendChild( node1 ); 
+		   node2 = xmlDoc.createElement( "message" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( "Hey what's up?" );
+		   node2.appendChild( node3 );
+		   			   
+		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
+		   return s;
+	   }
+	   
+	   
+	   /************************* 
+	    * traceAlert
+		*************************/
+		private function traceAlert( msg:String ):void{
+			trace( msg );
+		}
+		   
+		/************************* 
+		 * ParseReturn
+		 *************************/
+		private function ParseReturn( xmsg:XMLDocument ):void{  
+			var xnode:XMLNode;
+			xnode = xmsg.firstChild;
+			
+			if( xnode.nodeName == "Connection" ){
+				xnode = xnode.firstChild;
+				while( xnode != null ){
+					if( xnode.nodeName == "HConnection" ){
+						xnode = xnode.firstChild;
+						HConnection = parseInt(xnode.nodeValue);
+						break;
+					}
+					xnode = xnode.nextSibling;
+				}	
+			}else if(xnode.nodeName == "Search"){
+				xnode = xnode.firstChild;
+				while( xnode != null ){
+					if( xnode.nodeName == "movie" ){
+						xnode = xnode.firstChild;
+						var id:int = parseInt(xnode.firstChild.nodeValue);
+						xnode = xnode.nextSibling;
+						var name:String = xnode.firstChild.nodeValue;
+						xnode = xnode.nextSibling;
+						var dist:int = parseInt(xnode.firstChild.nodeValue);
+						
+						if(searchMenu != null){
+							
+							searchMenu.addResult(id, name, dist);
+						}
+						
+						xnode = xnode.parentNode;
+
+					}
+					xnode = xnode.nextSibling;
+				}			
+			}
+		 }
 	}
 }
 
