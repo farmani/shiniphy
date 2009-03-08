@@ -31,6 +31,8 @@ package Database
 		
 		private var searchMenu:SearchMenu = null; 
 		
+		public var waitingForData:Boolean = false;
+		
 		public function ConnectionHandler(ipAddr:String)
 		{
 			XMLSck.addEventListener( flash.events.Event.CONNECT, onSckConnect);
@@ -97,6 +99,7 @@ package Database
 			 if( success ){
 				 Connected = true;
 				 XMLSck.send( outgoingData );
+				 
 			 }else{
 				 Connected = false;
 				 traceAlert("Error connecting to " + AppIPAddr );
@@ -108,7 +111,8 @@ package Database
 		  ************************/
 		 public function onSckReceive( retDoc: String ):void{
 			  traceAlert( "Receiving: " + retDoc );
-			  retDoc = retDoc.substr(retDoc.indexOf("data=")+6,retDoc.length - 8 - retDoc.indexOf("data="));
+			  waitingForData = false;
+			  retDoc = retDoc.substr(retDoc.indexOf("<"),retDoc.length - 8 - retDoc.indexOf("data="));
 			  var doc:XMLDocument = new XMLDocument( retDoc );
 			  ParseReturn( doc );
 		  }
@@ -127,6 +131,7 @@ package Database
 			  
 			if( Connected){// && HConnection != -1 ){
 				outgoingData = XMLCreateCommand();
+				waitingForData = true;
 				
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
 					  traceAlert( "Not connected." ); 
@@ -144,6 +149,7 @@ package Database
 		  	
 		  	if( Connected){// && HConnection != -1 ){
 				outgoingData = XMLCreateSearch();
+				waitingForData = true;
 				
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
 					  traceAlert( "Not connected." ); 
@@ -160,6 +166,7 @@ package Database
 		  	
 		  	if( Connected){// && HConnection != -1 ){
 				outgoingData = XMLCreateFullInfo();
+				waitingForData = true;
 				
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
 					  traceAlert( "Not connected." ); 
@@ -176,6 +183,7 @@ package Database
 		  	
 		  	if( Connected){// && HConnection != -1 ){
 				outgoingData = XMLCreateSimilar();
+				waitingForData = true;
 				
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
 					  traceAlert( "Not connected." ); 
@@ -242,7 +250,7 @@ package Database
 		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
 		   return s;
 	   	
-	   }		   
+	   }	   
 
 
 	   private function XMLCreateSimilar():String {
@@ -307,6 +315,7 @@ package Database
 					xnode = xnode.nextSibling;
 				}	
 			}else if(xnode.nodeName == "Search"){
+				this.searchMenu.newSearch();
 				xnode = xnode.firstChild;
 				while( xnode != null ){
 					if( xnode.nodeName == "movie" ){
