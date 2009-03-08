@@ -74,7 +74,7 @@ public class searcher {
 		
 		query = query.toLowerCase();
 		
-		String Return = "<Search>\n", name;
+		String Return = "<Search>", name;
 		int dist;
 		boolean contains;
 		
@@ -108,12 +108,12 @@ public class searcher {
 		for (movieInfo info : results){
 			
 			if(i < 10)
-				Return += "\t<movie>\n\t\t<id>" + info.id + "</id>\n\t\t<name>\"" + info.name + "\"</name>\n\t\t<dist>\"" + info.dist + "\"</dist>\n\t</movie>\n";
+				Return += "<movie><id>" + info.id + "</id><name>" + info.name + "</name><dist>" + info.dist + "</dist></movie>";
 			
 			++i;
 		}
 		
-		return Return + "</Search>";
+		return Return + "</Search>\0";
 	}
 
 	//****************************

@@ -1,0 +1,1 @@
+To use the crossdomain.xml just place it wherever your home directory is. Ie the directory you end up in if you start cmd. For me that is c:\Users\Filip
