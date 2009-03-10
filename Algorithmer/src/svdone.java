@@ -452,7 +452,7 @@ public class svdone {
 			
 			
 		}
-		int maxId = 32560;
+
 		Scanner s;
 		
 
@@ -468,11 +468,20 @@ public class svdone {
 			
 			pr.println("17770 32560 260224");
 
-			int keyword, movieid;
+			int keyword, movieid = 0, previd;
 
 			while (s.hasNext()) {
+				previd = movieid;
 				movieid = s.nextInt();
 				keyword = s.nextInt();
+				
+				if(previd != 0 && movieid !=  previd){
+					pr.println();
+				}else if(previd != 0){
+					pr.print(" ");
+				}
+				
+				pr.print(keyword + " " + 1);
 
 				movies.get(movieid - 1).add(keyword);
 			
