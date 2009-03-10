@@ -85,6 +85,7 @@ public class oSckSrv {
 			while(true)
 			{
 				sck = sckSrv.accept();
+				
 
 				System.out.println( "\n[" + System.currentTimeMillis() +  "] accepted: " + sck.getInetAddress() );
 
@@ -92,6 +93,8 @@ public class oSckSrv {
 				System.out.println("\tIn-stream created.");
 				outo = new PrintWriter( sck.getOutputStream(), true );
 				System.out.println("\tOut-stream created.");
+				
+				
 
 				// you should put this on a separate thread
 				// to process communication with the client
@@ -108,8 +111,17 @@ public class oSckSrv {
 				//	 msg = msg.substring( 1 );
 
 				System.out.println( "\tRead: '" + msg + "'" );
+				
+				if(msg.indexOf("<policy-file-request/>") != -1){
+					Output = "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"1024\" /></cross-domain-policy>\0";
+					outo.println( Output );
+					
+					continue;
+				}
 
 				int recievedMsg = parseReceivedXML( msg );
+				
+				
 
 				if( connections.getConnection() != -1 ){
 
@@ -145,8 +157,7 @@ public class oSckSrv {
 
 					}else if(recievedMsg == oSckSrv._LOGON){
 
-						// do nothing.
-
+						//
 					}else{
 
 						// unknown message received
@@ -175,11 +186,13 @@ public class oSckSrv {
 	 * Entry point into the
 	 * application
 	 ********************************/
+	
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		oSckSrv s = new oSckSrv();
 
 	}
+
 
 	/********************************
 	 * ParseReceivedXML
@@ -274,6 +287,8 @@ public class oSckSrv {
 			}else if( sRoot.compareTo( "logon" ) ==0 ){
 
 				System.out.println("New client ! ");
+				
+				
 				return oSckSrv._LOGON;
 
 			}else{
