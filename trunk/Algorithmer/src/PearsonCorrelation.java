@@ -156,31 +156,7 @@ public class PearsonCorrelation {
 
 				s.close();
 			}
-			
-			
-			
-			
-			
-			rs = stmt.executeQuery("SELECT customerid,movieid,rating FROM training_set");
-
-			while (rs.next()) {
-				int userId = rs.getInt("customerid");
-				int relUserId = getRelUserId(userId);
-				short movieId = rs.getShort("movieid");
-				int relMovieId = movieId - 1;
-				byte rating = rs.getByte("rating");
-				movieByUser[userNextPlace[relUserId]] = movieId;
-				ratingByUser[userNextPlace[relUserId]] = rating;
-				userNextPlace[relUserId]++;
-				userByMovie[movieNextPlace[relMovieId]] = userId;
-				ratingByMovie[movieNextPlace[relMovieId]] = rating;
-				System.out.println("not interested?");
-				movieNextPlace[relMovieId]++;
-			}
-			rs.close();
-			
-			
-			
+		
 			
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
