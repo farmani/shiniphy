@@ -34,74 +34,105 @@ public class PearsonCorrelation {
 		int[] movieIndex = new int[NUM_MOVIES + 1];
 		int[] movieNextPlace = new int[NUM_MOVIES];
 
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
 
 		userIndex[NUM_USERS] = NUM_RECORDS;
 		int i = 0;
-		try {
-			//Class.forName("com.mysql.jdbc.Driver").newInstance();
-			Class.forName("com.asterdata.ncluster.Driver").newInstance();
-			
-			try {
-				String username = "psi";
-				String password = "pass19wd";
-				String url = "jdbc:ncluster://174.129.187.48:2406/psi";
-				
+		
+//		Connection conn = null;
+//		Statement stmt = null;
+//		ResultSet rs = null;
+//		try {
+//			//Class.forName("com.mysql.jdbc.Driver").newInstance();
+//			Class.forName("com.asterdata.ncluster.Driver").newInstance();
+//			
+//			try {
+//				String username = "psi";
+//				String password = "pass19wd";
+//				String url = "jdbc:ncluster://174.129.187.48:2406/psi";
+//				
 //				conn = DriverManager
 //				.getConnection("jdbc:mysql://128.12.186.185:3306/db?"
 //						+ "user=root&password=");
-				conn = DriverManager.getConnection(url,
-						username, password);
-				try {
-					stmt = conn.createStatement();
-					rs = stmt
-					.executeQuery("SELECT customerid,movies_rated FROM users_stats");
-					while (rs.next()) {
-						int relUserId = getRelUserId(rs.getInt("customerid"));
-						userIndex[relUserId] = i;
-						userNextPlace[relUserId] = i;
-						i += rs.getInt("movies_rated");
-						System.out.println("hi handsome");
-					}
-				} finally {
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException sqlEx) {
-							System.out.println("SQLException: "
-									+ sqlEx.getMessage());
-						}
-						rs = null;
-					}
-					if (stmt != null) {
-						try {
-							stmt.close();
-						} catch (SQLException sqlEx) {
-							System.out.println("SQLException: "
-									+ sqlEx.getMessage());
-						}
+//				conn = DriverManager.getConnection(url,
+//						username, password);
+//				try {
+//					stmt = conn.createStatement();
+//					rs = stmt
+//					.executeQuery("SELECT customerid,movies_rated FROM users_stats");
+//					while (rs.next()) {
+//						int relUserId = getRelUserId(rs.getInt("customerid"));
+//						userIndex[relUserId] = i;
+//						userNextPlace[relUserId] = i;
+//						i += rs.getInt("movies_rated");
+//						System.out.println("hi handsome");
+//					}
+//				} finally {
+//					if (rs != null) {
+//						try {
+//							rs.close();
+//						} catch (SQLException sqlEx) {
+//							System.out.println("SQLException: "
+//									+ sqlEx.getMessage());
+//						}
+//						rs = null;
+//					}
+//					if (stmt != null) {
+//						try {
+//							stmt.close();
+//						} catch (SQLException sqlEx) {
+//							System.out.println("SQLException: "
+//									+ sqlEx.getMessage());
+//						}
+//
+//						stmt = null;
+//					}
+//
+//					if (conn != null) {
+//						try {
+//							conn.close();
+//						} catch (SQLException sqlEx) {
+//							// Ignore
+//						}
+//
+//						conn = null;
+//					}
+//				}
+//			}
+//			catch (SQLException ex) {
+//				System.out.println("SQLException: " + ex.getMessage());
+//				System.out.println("SQLState: " + ex.getSQLState());
+//				System.out.println("VendorError: " + ex.getErrorCode());
+//			}
+//		try {
+//		rs = stmt.executeQuery("SELECT movieid,times_rated FROM movies");
+//		while (rs.next()) {
+//			int relMovieId = rs.getInt("movieid") - 1;
+//			movieIndex[relMovieId] = i;
+//			movieNextPlace[relMovieId] = i;
+//			i += rs.getInt("times_rated");
+//			System.out.println("yes you");
+//			}
+//		rs.close();
+//	}  catch (Exception ex) {
+//		System.out.println("Exception: " + ex.getMessage());
+//	}
 
-						stmt = null;
-					}
+		try{
+			Scanner s;
+			int relUserId;
 
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException sqlEx) {
-							// Ignore
-						}
+			s = new Scanner(new BufferedReader(new FileReader("data/user_support.txt")));
 
-						conn = null;
-					}
-				}
+			while (s.hasNext()) {
+				relUserId = getRelUserId(s.nextInt());
+				userIndex[relUserId] = i;
+				userNextPlace[relUserId] = i;
+				i += s.nextInt();
+				s.nextLine();
 			}
-			catch (SQLException ex) {
-				System.out.println("SQLException: " + ex.getMessage());
-				System.out.println("SQLState: " + ex.getSQLState());
-				System.out.println("VendorError: " + ex.getErrorCode());
-			}
+
+			s.close();
+
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
 		}
@@ -109,17 +140,22 @@ public class PearsonCorrelation {
 		movieIndex[NUM_MOVIES] = NUM_RECORDS;
 
 		i = 0;
-		try {
-			rs = stmt.executeQuery("SELECT movieid,times_rated FROM movies");
-			while (rs.next()) {
-				int relMovieId = rs.getInt("movieid") - 1;
+
+		try{
+			Scanner s;
+			s = new Scanner(new BufferedReader(new FileReader("data/movie_support.txt")));
+
+			while (s.hasNext()) {
+				int relMovieId = s.nextInt() - 1;
 				movieIndex[relMovieId] = i;
 				movieNextPlace[relMovieId] = i;
-				i += rs.getInt("times_rated");
-				System.out.println("yes you");
-				}
-			rs.close();
-		}  catch (Exception ex) {
+				i += s.nextInt();
+				s.nextLine();
+			}
+
+			s.close();
+
+		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
 		}
 
