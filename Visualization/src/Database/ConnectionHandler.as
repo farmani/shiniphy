@@ -6,6 +6,7 @@ package Database
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.net.XMLSocket;
+	import flash.system.Security;
 	import flash.xml.XMLDocument;
 	import flash.xml.XMLNode;
 	//import mx.controls.Alert;
@@ -27,7 +28,7 @@ package Database
 		private var Connected:Boolean  = false; 
 		private var HConnection:Number = -1; // connection handle
 		
-		private var outgoingData:String = "";
+		private var outgoingData:String = "<policy-file-request/>\n";
 		
 		private var searchMenu:SearchMenu = null; 
 		
@@ -40,7 +41,12 @@ package Database
 			
 			AppIPAddr = ipAddr;
 			
+			//XMLSck.connect( AppIPAddr, 1008 );
+			//Security.loadPolicyFile("xmlsocket://"+ipAddr+":"+1008);
+			Security.loadPolicyFile( "xmlsocket://127.0.0.1/crossdomain.xml");
 			
+			
+			var egon:Number = 0;
 		}
 		
 		/****************************************** 
@@ -52,7 +58,7 @@ package Database
 			
 			Connected = false;
 			
-			outgoingData = XMLCreateLogon();
+			//outgoingData = XMLCreateLogon();
 			
 			try{		
 				if( XMLSck.connect( AppIPAddr, 1024 ) == false ){
@@ -112,7 +118,7 @@ package Database
 		 public function onSckReceive( retDoc: String ):void{
 			  traceAlert( "Receiving: " + retDoc );
 			  waitingForData = false;
-			  retDoc = retDoc.substr(retDoc.indexOf("<"),retDoc.length - 8 - retDoc.indexOf("data="));
+			  retDoc = retDoc.substr(retDoc.indexOf("<"),retDoc.length - 2 - retDoc.indexOf("<"));
 			  var doc:XMLDocument = new XMLDocument( retDoc );
 			  ParseReturn( doc );
 		  }
@@ -315,7 +321,8 @@ package Database
 					xnode = xnode.nextSibling;
 				}	
 			}else if(xnode.nodeName == "Search"){
-				this.searchMenu.newSearch();
+				searchMenu.newSearch();
+				
 				xnode = xnode.firstChild;
 				while( xnode != null ){
 					if( xnode.nodeName == "movie" ){
