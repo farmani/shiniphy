@@ -1,4 +1,7 @@
 import java.util.HashMap;
+import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.sql.*;
 
 public class PearsonCorrelation {
@@ -121,6 +124,43 @@ public class PearsonCorrelation {
 		}
 
 		try {
+			
+			Scanner s;
+			short movieId = 0;
+			int userId;
+			int relUserId;
+			byte rating;
+			
+			// save data in fancy structures.
+			while ( movieId < 17770)
+			{
+
+				s = new Scanner(new BufferedReader(new FileReader(getFileName((short)(movieId + 1), true))));
+				s.useDelimiter(",");
+				s.nextLine();
+
+				while (s.hasNext()) {
+					userId = s.nextInt();
+					relUserId = getRelUserId(userId);
+					rating = (byte)s.nextInt();
+					
+					movieByUser[userNextPlace[relUserId]] = movieId;
+					ratingByUser[userNextPlace[relUserId]] = rating;
+					userNextPlace[relUserId]++;
+					userByMovie[movieNextPlace[movieId]] = userId;
+					ratingByMovie[movieNextPlace[movieId]] = rating;
+					movieNextPlace[movieId]++;
+
+					s.nextLine();
+				}
+
+				s.close();
+			}
+			
+			
+			
+			
+			
 			rs = stmt.executeQuery("SELECT customerid,movieid,rating FROM training_set");
 
 			while (rs.next()) {
@@ -138,6 +178,10 @@ public class PearsonCorrelation {
 				movieNextPlace[relMovieId]++;
 			}
 			rs.close();
+			
+			
+			
+			
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
 		}
@@ -201,5 +245,29 @@ public class PearsonCorrelation {
 				}
 			}
 		}
+	}
+	public static String getFileName(short movieId, boolean read){
+
+		String Return;
+
+		if(read){
+			Return = "D:\\netflix\\download\\training_set\\mv_";
+		}else{ 
+			Return = "out\\mv_";
+		}
+
+		if(movieId >= 10000){
+			Return += "00";
+		}else if(movieId >= 1000){
+			Return += "000";			
+		}else if(movieId >= 100){
+			Return += "0000";			
+		}else if(movieId >= 10){
+			Return += "00000";			
+		}else{
+			Return += "000000";			
+		}
+
+		return Return + movieId + ".txt";
 	}
 }
