@@ -26,9 +26,9 @@ public class PullData {
 				try {
 					stmt = conn.createStatement();
 					rs = stmt
-							.executeQuery("SELECT customerid,movies_rated FROM users_stats");
+							.executeQuery("SELECT movieid, times_rated, avg_rating FROM movies");
 					while (rs.next()) {
-						pr.println (rs.getInt("customerid")+" "+rs.getInt("movies_rated"));
+						pr.println (rs.getInt("movieid")+","+rs.getInt("times_rated")+","+rs.getInt("avg_rating"));
 					}
 				} finally {
 					if (rs != null) {
