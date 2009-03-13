@@ -31,14 +31,18 @@ public class oSckSrv {
 	String Database = "";
 	String Command = "";
 	String movieSearch = "";
+	String fullInfoSearch = "";
+	String similarSearch = "";
 	String Output = "";
-	
+
 	// if true the search of movies is performed locally, substantially faster but server takes time to start.
 	boolean localSearch = true;
 
 	final static int _LOGON = 1;
 	final static int _COMMAND = 2;
 	final static int _SEARCH = 3;
+	final static int _FULLINFO = 4;
+	final static int _SIMILAR = 5;
 	final static int _UNKNOWN = 0;
 
 	/********************************
@@ -53,10 +57,10 @@ public class oSckSrv {
 			System.out.println( "Waiting for connection. Port: " + portNumber );
 
 
-			IPAddr = "174.129.187.48";
-			Login = "psi";
-			Password = "pass19wd";
-			Database = "psi";
+			IPAddr = "128.12.147.138";
+			Login = "filip";
+			Password = "filip";
+			Database = "netflix";
 
 			connections = new dbConn(IPAddr, Login, Password, Database);
 
@@ -68,11 +72,11 @@ public class oSckSrv {
 			}
 			else
 				System.out.println( "\tConnection cannot be granted: " + connections.getError());
-			
-			
-			
+
+
+
 			searchManager = new searcher();
-			
+
 			if(localSearch)
 				searchManager.load(connections.getFullMovieList());
 
@@ -81,6 +85,7 @@ public class oSckSrv {
 			while(true)
 			{
 				sck = sckSrv.accept();
+				
 
 				System.out.println( "\n[" + System.currentTimeMillis() +  "] accepted: " + sck.getInetAddress() );
 
@@ -88,6 +93,8 @@ public class oSckSrv {
 				System.out.println("\tIn-stream created.");
 				outo = new PrintWriter( sck.getOutputStream(), true );
 				System.out.println("\tOut-stream created.");
+				
+				
 
 				// you should put this on a separate thread
 				// to process communication with the client
@@ -104,53 +111,61 @@ public class oSckSrv {
 				//	 msg = msg.substring( 1 );
 
 				System.out.println( "\tRead: '" + msg + "'" );
+				
+				if(msg.indexOf("<policy-file-request/>") != -1){
+					Output = "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"1024\" /></cross-domain-policy>";
+					outo.println( Output );
+					
+					continue;
+				}
 
 				int recievedMsg = parseReceivedXML( msg );
-
 				
-				if(recievedMsg == oSckSrv._COMMAND || recievedMsg == oSckSrv._SEARCH){
+				
 
-					// a command has been received; if it is not a 'disconnect'' command,
-					// determine the connection that the command is intended for,
-					// then execute the command; if it is a 'disconnect'' command,
-					// remove the connection from the connections collection
+				if( connections.getConnection() != -1 ){
+
+					if(recievedMsg == oSckSrv._COMMAND){
+						System.out.println( "\tExecuting command for connection " + String.valueOf(connections));
 
 
-					if( connections.getConnection() != -1 ){
+						Output = connections.Execute( Command );
+						System.out.println( "\tResult: '" + Output + "'");
+						outo.println( Output );
 
-						if(recievedMsg == oSckSrv._COMMAND){
-							System.out.println( "\tExecuting command for connection " + String.valueOf(connections));
-
-							
-							Output = connections.Execute( Command );
-							System.out.println( "\tResult: '" + Output + "'");
-							outo.println( Output );
-							
-						}else if(recievedMsg == oSckSrv._SEARCH){
-							if(!localSearch){
-								Output = connections.Search("SELECT movieid, title FROM searchstring(ON movie_titles SEARCHFOR('" + movieSearch + "')) ORDER BY closeness LIMIT 10");
-							}else{
-								Output = searchManager.search(movieSearch);
-							}
-							System.out.println( "\tResult: '" + Output + "'");
-							outo.println( Output );
-
+					}else if(recievedMsg == oSckSrv._SEARCH){
+						if(!localSearch){
+							Output = connections.Search(movieSearch);
+						}else{
+							Output = searchManager.search(movieSearch);
 						}
-					}else
-						System.out.println("\tConnection not found.");
+						System.out.println( "\tResult: '" + Output + "'");
+						outo.println( Output );
 
 
-				}else if(recievedMsg == oSckSrv._LOGON){
-					
-					// do nothing.
-					
-				}else{
+					}else if(recievedMsg == oSckSrv._FULLINFO){
+						
+						
+						Output = connections.getFullInfo(fullInfoSearch);
+						
+						
+					}else if(recievedMsg == oSckSrv._SIMILAR){
+						
+						
+						Output = connections.getAllSimilar(similarSearch);
 
-					// unknown message received
 
-					System.out.println( "\tUnknown command.");
+					}else if(recievedMsg == oSckSrv._LOGON){
 
-				}
+						//
+					}else{
+
+						// unknown message received
+
+						System.out.println( "\tUnknown command.");
+					}
+				}else
+					System.out.println("\tConnection not found.");	
 
 				// if running on a separate thread,
 				// you would NOT be executing the following two lines:
@@ -171,11 +186,13 @@ public class oSckSrv {
 	 * Entry point into the
 	 * application
 	 ********************************/
+	
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		oSckSrv s = new oSckSrv();
 
 	}
+
 
 	/********************************
 	 * ParseReceivedXML
@@ -194,7 +211,7 @@ public class oSckSrv {
 			String sRoot = oRoot.getTagName();
 
 			if( sRoot.compareTo( "flashCommand" ) ==0 ){
-				
+
 				System.out.println( "\tCommand request:");
 				NodeList list = oRoot.getChildNodes();
 				for( int i = 0; i < list.getLength(); i++){
@@ -210,7 +227,7 @@ public class oSckSrv {
 					System.out.println( "\t-" + nodeName + ":" + nodeValue );
 				}
 				return oSckSrv._COMMAND;
-				
+
 			}else if( sRoot.compareTo("search") == 0 ){
 
 				System.out.println( "\tSearch request:");
@@ -230,11 +247,50 @@ public class oSckSrv {
 
 				return oSckSrv._SEARCH;
 				
+			}else if( sRoot.compareTo( "fullinfo" ) ==0 ){
+			
+				System.out.println( "\tFull info request:");
+				NodeList list = oRoot.getChildNodes();
+				for( int i = 0; i < list.getLength(); i++){
+					Node n = list.item( i );
+					String nodeName = n.getNodeName();
+					String nodeValue = "";
+
+					if( nodeName == "movieId" ){
+						nodeValue = n.getFirstChild().getNodeValue();
+						fullInfoSearch = nodeValue;
+					}
+
+					System.out.println( "\t" + nodeName + ":" + nodeValue );
+				}				
+				
+				return oSckSrv._FULLINFO;
+			}else if( sRoot.compareTo( "similar" ) ==0 ){
+
+				
+				System.out.println( "\tSimilar movie request:");
+				NodeList list = oRoot.getChildNodes();
+				for( int i = 0; i < list.getLength(); i++){
+					Node n = list.item( i );
+					String nodeName = n.getNodeName();
+					String nodeValue = "";
+
+					if( nodeName == "movieId" ){
+						nodeValue = n.getFirstChild().getNodeValue();
+						similarSearch = nodeValue;
+					}
+
+					System.out.println( "\t" + nodeName + ":" + nodeValue );
+				}	
+				
+				return oSckSrv._SIMILAR;
 			}else if( sRoot.compareTo( "logon" ) ==0 ){
-				
+
 				System.out.println("New client ! ");
-				return oSckSrv._LOGON;
 				
+				
+				return oSckSrv._LOGON;
+
 			}else{
 				System.out.println( "\tUnknown client request");
 				return oSckSrv._UNKNOWN;

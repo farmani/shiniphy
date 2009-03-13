@@ -1,12 +1,14 @@
 import java.util.HashMap;
 import java.util.Scanner;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.sql.*;
+//import java.sql.*;
+import java.io.PrintStream;
 
 public class PearsonCorrelation {
-//	private static final int NUM_RECORDS = 100480507;
-	private static final int NUM_RECORDS = 1004;
+	private static final int NUM_RECORDS = 100480507;
+//	private static final int NUM_RECORDS = 1004;
 	private static final int NUM_USERS = 480189;
 	private static final int NUM_MOVIES = 17770;
 	private static int nextRelId = 0;
@@ -131,6 +133,7 @@ public class PearsonCorrelation {
 				s.nextLine();
 			}
 
+			System.out.println("Done with user support loading");
 			s.close();
 
 		} catch (Exception ex) {
@@ -152,6 +155,10 @@ public class PearsonCorrelation {
 				i += s.nextInt();
 				s.nextLine();
 			}
+			
+			
+			
+			System.out.println("Done with movie support loading");
 
 			s.close();
 
@@ -162,16 +169,17 @@ public class PearsonCorrelation {
 		try {
 			
 			Scanner s;
-			short movieId = 0;
+			short movieId = 0, realMovieId;
 			int userId;
 			int relUserId;
 			byte rating;
 			
 			// save data in fancy structures.
-			while ( movieId < 17770)
+			while ( movieId < NUM_MOVIES)
 			{
+				realMovieId = (short)(movieId + 1);
 
-				s = new Scanner(new BufferedReader(new FileReader(getFileName((short)(movieId + 1), true))));
+				s = new Scanner(new BufferedReader(new FileReader(getFileName(realMovieId, true))));
 				s.useDelimiter(",");
 				s.nextLine();
 
@@ -180,7 +188,7 @@ public class PearsonCorrelation {
 					relUserId = getRelUserId(userId);
 					rating = (byte)s.nextInt();
 					
-					movieByUser[userNextPlace[relUserId]] = movieId;
+					movieByUser[userNextPlace[relUserId]] = realMovieId;
 					ratingByUser[userNextPlace[relUserId]] = rating;
 					userNextPlace[relUserId]++;
 					userByMovie[movieNextPlace[movieId]] = userId;
@@ -189,73 +197,99 @@ public class PearsonCorrelation {
 
 					s.nextLine();
 				}
+				if(movieId % 177 == 0){
+					System.out.println("Done with movie: " + movieId);
+				}
+				
+				++movieId;
 
 				s.close();
 			}
-		
-			
 		} catch (Exception ex) {
 			System.out.println("Exception: " + ex.getMessage());
 		}
-
-		int[][][] values = new int[NUM_MOVIES][5][5];
-
-		for (i = 0; i < NUM_MOVIES - 1; i++) {
-			for (int j = i + 1; j < NUM_MOVIES; j++) {
-				for (int k = 0; k < 5; k++) {
-					for (int l = 0; l < 5; l++) {
-						values[j][k][l] = 0;
+			
+		try{
+		
+			FileOutputStream out = new FileOutputStream("pearson.txt");
+	
+			// Connect print stream to the output stream
+			PrintStream pr = new PrintStream( out );	
+	
+			int[][][] values = new int[NUM_MOVIES][5][5];
+			
+			float sum1 = 0;
+			float sum2 = 0;
+			float sumsq1 = 0;
+			float sumsq2 = 0;
+			float sumpr = 0;
+			float num = 0;
+			float bottom, top, pearson;
+	
+			for (i = 0; i < NUM_MOVIES - 1; i++) {
+				
+				if(i % 177 == 0)
+					System.out.println("Starting on movie:" + i);
+				
+				for (int j = i + 1; j < NUM_MOVIES; j++) {
+					for (int k = 0; k < 5; k++) {
+						for (int l = 0; l < 5; l++) {
+							values[j][k][l] = 0;
+						}
+					}
+				}
+	
+				for (int j = movieIndex[i]; j < movieIndex[i + 1]; j++) {
+					int relUserId = getRelUserId(userByMovie[j]);
+					for (int k = userIndex[relUserId]; k < userIndex[relUserId + 1]; k++) {
+						if (movieByUser[k] - 1 > i) {
+							values[movieByUser[k] - 1][ratingByUser[k] - 1][ratingByMovie[j] - 1]++;
+						}
+					}
+				}
+	
+				for (int j = i + 1; j < NUM_MOVIES; j++) {
+	
+					sum1 = 0;
+					sum2 = 0;
+					sumsq1 = 0;
+					sumsq2 = 0;
+					sumpr = 0;
+					num = 0;
+					
+					int val;
+	
+					for (int k = 1; k <= 5; k++) {
+						for (int l = 1; l <= 5; l++) {
+							val = values[j][k - 1][l - 1];
+							sum1 += l * val;
+							sum2 += k * val;
+							sumsq1 += l * l * val;
+							sumsq2 += k * k * val;
+							sumpr += k * l * val;
+							num += val;
+						}
+					}
+	
+					if(num > 50){
+						
+						bottom = (sumsq1 - (sum1 * sum1) / num) * (sumsq2 - (sum2 * sum2) / num);
+	
+						if (bottom != 0) {
+							bottom = (float) Math.sqrt(bottom);
+							
+							top = sumpr - (sum1 * sum2 / num);
+							pearson = (top / bottom) * (num / (num + 10));
+							if(pearson > 0.5f){
+								pr.println((i + 1) + "," + (j + 1) + "," + num + "," + pearson);
+								pr.println((j + 1) + "," + (i + 1) + "," + num + "," + pearson);
+							}
+						}
 					}
 				}
 			}
-
-			for (int j = movieIndex[i]; j < movieIndex[i + 1]; j++) {
-				int relUserId = getRelUserId(userByMovie[j]);
-				for (int k = userIndex[relUserId]; k < userIndex[relUserId + 1]; j++) {
-					if (movieByUser[k] - 1 > i) {
-						values[movieByUser[k] - 1][ratingByUser[k] - 1][ratingByMovie[j] - 1]++;
-					}
-				}
-			}
-
-			for (int j = i + 1; j < NUM_MOVIES; j++) {
-
-				float sum1 = 0;
-				float sum2 = 0;
-				float sumsq1 = 0;
-				float sumsq2 = 0;
-				float sumpr = 0;
-				float num = 0;
-
-				for (int k = 1; k <= 5; k++) {
-					for (int l = 1; k <= 5; l++) {
-						int val = values[j][k - 1][l - 1];
-						sum1 += l * val;
-						sum2 += k * val;
-						sumsq1 = l * l * val;
-						sumsq2 = k * k * val;
-						sumpr = k * l * val;
-						num += val;
-					}
-				}
-
-				float top = sumpr - (sum1 * sum2 / num);
-				float bottom = (float) Math.sqrt((sumsq1 - (sum1 * sum1) / num)
-						* (sumsq2 - (sum2 * sum2) / num));
-
-				if (bottom != 0) {
-					float pearson = (top / bottom) * (num / (num + 10));
-					System.out.print((i + 1) + "," + (j + 1) + "," + num + ","
-							+ pearson + "\n");
-					System.out.print((j + 1) + "," + (i + 1) + "," + num + ","
-							+ pearson + "\n");
-				}
-
-				else {
-					System.out.print((i + 1) + "," + (j + 1) + "," + num + ","
-							+ 0 + "\n");
-				}
-			}
+		} catch (Exception ex) {
+			System.out.println("Exception: " + ex.getMessage());
 		}
 	}
 	public static String getFileName(short movieId, boolean read){
