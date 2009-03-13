@@ -39,6 +39,9 @@ package Database
 			id = parseInt(xnode.childNodes[0].firstChild);
 			movieName = xnode.childNodes[1].firstChild;
 			score = parseFloat(xnode.childNodes[2].firstChild);
+			netFlixRating = parseInt(xnode.childNodes[3].firstChild);
+			imdbRating = parseInt(xnode.childNodes[4].firstChild);
+			support = parseInt(xnode.childNodes[5].firstChild);
 			
 		}
 	}
