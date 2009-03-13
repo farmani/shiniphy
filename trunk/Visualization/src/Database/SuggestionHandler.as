@@ -15,7 +15,7 @@ package Database
 		
 		public function SuggestionHandler()
 		{
-			movies = new Vector.<Movie>(1000);
+			movies = new Vector.<Movie>(20);
 			
 			resultBox = new TextField();
 			resultBox.height = 300;
@@ -31,6 +31,7 @@ package Database
 		
 		public function newSimilarSet(xnode:XMLNode):void{
 			resultBox.text = "";
+			movies.length = 0;
 			
 			xnode = xnode.firstChild;
 			while( xnode != null ){
@@ -41,6 +42,8 @@ package Database
 				}
 				xnode = xnode.nextSibling;
 			}
+			
+			var egon:Number = 0;
 		}		
 	}
 }
