@@ -8,5 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/ncluster-jdbc-driver.jar"/>
 	<classpathentry kind="lib" path="libs/ncluster-sqlmr-api.jar"/>
+	<classpathentry kind="lib" path="/Algorithmer/libs/mysql-connector-java-3.0.17-ga-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

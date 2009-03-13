@@ -9,6 +9,8 @@ import java.io.*;
 //import java.net.ServerSocket;
 import java.sql.SQLException;
 
+//import searcher.movieInfo;
+
 public class svdone {
 
 	public void doSvd() throws FileNotFoundException{
@@ -293,7 +295,7 @@ public class svdone {
 		Scanner s;
 
 		try {
-			s = new Scanner(new BufferedReader(new FileReader("genre.dat")));
+			s = new Scanner(new BufferedReader(new FileReader("genresReduced.dat")));
 
 
 			Vector<Integer> newId;
@@ -337,7 +339,7 @@ public class svdone {
 				clusters.add(new Vector<Integer>());
 			}
 			
-			s = new Scanner(new BufferedReader(new FileReader("cluto.mat.clustering." + amountClusters)));
+			s = new Scanner(new BufferedReader(new FileReader("svd.mat.clustering." + amountClusters)));
 			
 			int j = 1;
 			
@@ -408,7 +410,7 @@ public class svdone {
 						
 						for(int k = 0;k<amountGenres;++k){
 							
-							if((float)genreCount[k] / (float)moviesWithGenres > .66){
+							if((float)genreCount[k] / (float)moviesWithGenres > .5){
 								
 								miniVec.add(k);
 								
@@ -448,25 +450,26 @@ public class svdone {
 		for(int i=0;i<17770;++i){
 			
 			movies.add(new Vector<Integer>());
-			
-			
-			
+				
 		}
-		int maxId = 32560;
+		
 		Scanner s;
 		
-
-
 		try {
 			
-			FileOutputStream out = new FileOutputStream("keywords.mat");
+			FileOutputStream out = new FileOutputStream("genresPredict300.mat");
 
 			// Connect print stream to the output stream
-			PrintStream pr = new PrintStream( out );			
+			PrintStream pr = new PrintStream( out );
 			
-			s = new Scanner(new BufferedReader(new FileReader("keyword.dat")));
+			FileOutputStream out2 = new FileOutputStream("genresMovieIdMap.dat");
+
+			// Connect print stream to the output stream
+			PrintStream pr2 = new PrintStream( out2 );
 			
-			pr.println("17770 32560 260224");
+			s = new Scanner(new BufferedReader(new FileReader("genresPredict300.dat")));
+			
+			pr.println("xxx 28 31536");
 
 			int keyword, movieid;
 
@@ -477,14 +480,163 @@ public class svdone {
 				movies.get(movieid - 1).add(keyword);
 			
 			}
+			
+			Vector<Integer> vec;
+			for(int i=0;i<17770;++i){
+				
+				vec = movies.get(i);
+				
+				for(int j=0;j<vec.size();++j){
+					if(j != 0){
+						pr.print(" ");
+					}
+					pr.print(vec.get(j) + " 1");
+				}
+				if(vec.size() > 0){
+					pr.println();
+					pr2.println(i+1);
+
+				}
+					
+			}
+			
+			pr.close();
+			pr2.close();
+			
+			
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	class pairType implements Comparable<pairType>{
+
+		int id;
+		int var;
+		
+		public pairType(int id, int var){
+			
+			this.var = var;
+			this.id = id;
+
+		}
+		public int compareTo(pairType anotherInfo) throws ClassCastException {
+			if(this.id - anotherInfo.id == 0){
+				return this.var - anotherInfo.var;
+			}
+			
+			return this.id - anotherInfo.id;
+		}
+
+		
+	}
+	
+	public void sortDoubleRow(String inFile, String outFile){
+		
+		try {
+			
+			FileOutputStream out = new FileOutputStream(outFile);
+
+			// Connect print stream to the output stream
+			PrintStream pr = new PrintStream( out );
+			Scanner s = new Scanner(new BufferedReader(new FileReader(inFile)));
+			
+			Vector<pairType> pairs = new Vector<pairType>();
+
+			while(s.hasNext()){
+				pairs.add(new pairType(s.nextInt(), s.nextInt()));
+
+				
+				
+			}
+			
+			Collections.sort(pairs);
+			
+			for(int i=0;i<pairs.size();++i){
+				
+				pr.println(pairs.get(i).id + " " + pairs.get(i).var);
+				
+			}
+			
+			pr.close();
+			
+		}catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
+	}
+	
+	public void compareTwo(String inFile, String inFile2, String outFile){
 		
-		
+		try {
+			
+			FileOutputStream out = new FileOutputStream(outFile);
+
+			// Connect print stream to the output stream
+			PrintStream pr = new PrintStream( out );
+			Scanner s = new Scanner(new BufferedReader(new FileReader(inFile)));
+			Scanner s2 = new Scanner(new BufferedReader(new FileReader(inFile2)));
+			
+			Vector<pairType> pairs = new Vector<pairType>();
+			Vector<pairType> pairs2 = new Vector<pairType>();
+
+			while(s.hasNext()){
+				pairs.add(new pairType(s.nextInt(), s.nextInt()));
+
+			}
+			
+			Collections.sort(pairs);
+			
+			while(s2.hasNext()){
+				pairs2.add(new pairType(s2.nextInt(), s2.nextInt()));
+
+			}
+			
+			Collections.sort(pairs2);
+			
+			Vector<Integer> outo;
+			
+			for(int i=0;i<pairs.size();++i){
+				
+				outo = new Vector<Integer>();
+				
+				for(int j=0;j<pairs2.size();++j){
+					
+					if(pairs2.get(j).id == pairs.get(i).id){
+						outo.add(pairs2.get(j).var);
+						//pairs2.remove(j);
+					}
+				}
+				if(outo.size() > 0){
+					int tmp = pairs.get(i).id;
+					
+					pr.print("Original " + tmp + " (");
+					while(i < pairs.size() && pairs.get(i).id == tmp){
+						
+						pr.print(pairs.get(i).var + " ");
+						++i;
+						
+					}
+					
+					pr.print(")\t\t New (");
+					
+					for(int k=0;k<outo.size();++k){
+						
+						pr.print(outo.get(k) + " ");
+					}
+					pr.println(")");
+				}
+			}
+			
+			pr.close();
+			
+		}catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		
 		
 	}
@@ -556,14 +708,14 @@ public class svdone {
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
         }
-
-	
 	}
 
 	public static void main(String[] args) {
 
+		svdone svd = new svdone();
+		
 		if(false){
-			svdone svd = new svdone();
+			
 	
 			try {
 				svd.doSvd();
@@ -574,14 +726,16 @@ public class svdone {
 		
 		}else{
 			
-			Integer[] egon = {5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500};
+			//Integer[] egon = {5, 10, 25, 50, 75, 100, 150, 200, 300, 400, 500};
 			
-			for(int i = 0;i < egon.length;++i){
-				//genrePredictor(egon[i]);
-			}
+			//for(int i = 0;i < egon.length;++i){
+			//genrePredictor(28);
+			//}
 			//createCluto();
 			//loadSvdIntoSql();
-			createKeywordCluto();
+			//createKeywordCluto();
+			//svd.sortDoubleRow("genresPredict28.dat", "genresPredict28Sorted.dat");
+			svd.compareTwo("lostGenres.dat", "lostGenresRegen.dat", "genresLostCompare.dat");
 		}
 
 
