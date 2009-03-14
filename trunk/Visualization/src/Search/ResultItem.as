@@ -11,7 +11,7 @@ package Search
 		private var dist:int;
 		private var pos:int;
 		
-		private var trueHeight:int = 30;
+		private var trueHeight:int = 20;
 		
 		private var nameField:TextField;
 		
@@ -29,7 +29,9 @@ package Search
 			
 			nameField = new TextField();
 			nameField.x = 0;
-			nameField.y = 30 + trueHeight*pos;
+			nameField.y = trueHeight*pos;
+			nameField.height = 20;
+			nameField.width = 250;
 			nameField.background = false;
 			nameField.type = TextFieldType.DYNAMIC;
 			nameField.border = false;
@@ -38,17 +40,37 @@ package Search
 			
 			this.addChild(nameField);
 			
-			graphics.beginFill(0xCCCCCC);
-			graphics.drawRect(0,30 + trueHeight*pos,150,trueHeight-5);
-			graphics.endFill();
+			//graphics.beginFill(0xCCCCCC);
+			//graphics.drawRect(0,trueHeight*pos,150,trueHeight-5);
+			//graphics.endFill();
 			
 			this.addEventListener(MouseEvent.CLICK, mouseDown);
+			this.addEventListener(MouseEvent.MOUSE_OVER, mouseIn);
+			this.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
 			
+			graphics.beginFill(0xFFFFFF);
+			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
+			graphics.endFill();
 		}
 		
 		public function mouseDown(evt:MouseEvent):void{
 			
-			searchParent.mouseDown(this.id);
+			searchParent.performSimilaritySearch(this.id);
+			
+		}
+		
+		public function mouseIn(evt:MouseEvent):void{
+			
+			graphics.beginFill(0x9999AA);
+			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
+			graphics.endFill();
+			
+		}
+		public function mouseOut(evt:MouseEvent):void{
+			
+			graphics.beginFill(0xFFFFFF);
+			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
+			graphics.endFill();
 			
 		}
 	}

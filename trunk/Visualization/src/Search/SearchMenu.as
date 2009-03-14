@@ -2,50 +2,68 @@ package Search
 {
 	import Database.ConnectionHandler;
 	
+	import fl.containers.ScrollPane;
+	
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.xml.XMLNode;
 
+
 	public class SearchMenu extends Sprite
 	{
 		
-		public const maxResults:int = 8;
+		public const maxResults:int = 15;
 		
 		private var searchBox:TextField;
 		private var conn:ConnectionHandler;
-		private var results:Array;
+		private var results:Sprite;
+		private var resultArea:ScrollPane;
 			
 		public function SearchMenu(conn:ConnectionHandler)
 		{
 			this.conn = conn;
 			
-			results = new Array();
+			results = new Sprite();
+			resultArea = new ScrollPane();
 			
-			this.x = 100;
-			this.y = 20;
+			resultArea.width = 250;
+			resultArea.height = 120;
+			resultArea.y = 21;
+			resultArea.x = 1;
+			//resultArea.horizontalScrollBar.visible = false;
+			resultArea.visible = false;
+			resultArea.source = results;
+			resultArea.horizontalScrollPolicy = "off";
+			resultArea.verticalScrollPolicy = "auto";
+			
 			
 			//  search
 			searchBox = new TextField();
 			searchBox.height = 20;
-			searchBox.width = 150;
+			searchBox.width = 250;
 			searchBox.background = true;
 			searchBox.type = TextFieldType.INPUT;
 			searchBox.border = true;
 			searchBox.addEventListener(KeyboardEvent.KEY_DOWN, updateSearch);
 			
 			this.addChild(searchBox);
+			this.addChild(resultArea);
+			
+			searchBox.addEventListener(MouseEvent.CLICK, mouseDown);
 			
 		}
 		
 		public function newSearch(xnode:XMLNode):void{
-			for each(var res:ResultItem in results){
-					
-				this.removeChild(res);
-			}	
+			while (results.numChildren > 0){
+  				results.removeChildAt(0);
+			}
+		
+			this.resultArea.visible = false;
 			
-			results = [];
+			//results = [];
 			
 			
 			xnode = xnode.firstChild;
@@ -66,24 +84,40 @@ package Search
 					}
 					xnode = xnode.nextSibling;
 				}
+				
+				this.resultArea.update();
+				setChildIndex(resultArea,numChildren - 1);
+				setChildIndex(searchBox,numChildren - 1);
 			
 		}
 		
 		public function addResult(id:int, name:String, dist:int):void{
 			
 			
-			if(results.length < maxResults){
-				var r:ResultItem = new ResultItem(id, name, dist, results.length + 1, this);
-				results.push(r);
-	
-				this.addChild(r);
+			
+			if(results.numChildren < maxResults){
+				var r:ResultItem = new ResultItem(id, name, dist, results.numChildren, this);
+				results.addChild(r);
+				
 			}
+			
+			
+			this.resultArea.visible = true;
 			
 		}
 		
-		public function mouseDown(id:int):void{
+		public function performSimilaritySearch(id:int):void{
 			
 			conn.findSimilar(id);
+			resultArea.visible = false;
+			
+		}
+		
+		public function mouseDown(evt:MouseEvent):void{
+			
+			if(searchBox.text.length > 1){
+				resultArea.visible = true;
+			}
 			
 		}
 		
