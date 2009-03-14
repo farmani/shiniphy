@@ -3,17 +3,17 @@ package
 	import __AS3__.vec.Vector;
 	
 	import flare.HoverControl2;
+	import flare.util.Shapes;
 	import flare.vis.Visualization;
+	import flare.vis.controls.DragControl2;
+	import flare.vis.controls.ExpandControl;
+	import flare.vis.controls.IControl;
 	import flare.vis.data.Data;
 	import flare.vis.data.MovieSprite;
 	import flare.vis.data.NodeSprite;
 	import flare.vis.events.SelectionEvent;
-	import flare.vis.controls.DragControl2;
-	import flare.vis.controls.ExpandControl;
 	import flare.vis.operator.encoder.PropertyEncoder;
-	import flare.vis.controls.IControl;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
-	import flare.util.Shapes;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -53,6 +53,8 @@ package
 				r[i].alpha = 0;
 			}
 			var movieArray:Array = new Array(20);
+			var j:int;
+			
 			for(i = 0; i < 30; i++)
 			{
 				var n:MovieSprite = new MovieSprite(); 
@@ -61,9 +63,11 @@ package
 				n.renderer = movieRenderer; 
 				var a:Array = new Array(3);
 				var b:Array = new Array(3);
- 				for(var j:int = 0; j < 3; j++)
+				
+ 				for(j = 0; j < 3; j++){
  					if(Math.random() > 0.5)
  						a[j] = 1;
+ 				}
 				j = Math.random()*3;
 				var cnt:int = 0;
  				if(a[j] == 1)
@@ -133,7 +137,7 @@ package
 			
 			data.nodes.setProperties(opt[idx].nodes);
 			data.edges.setProperties(opt[idx].edges);
-			for (var j:int=0; k<data.nodes.length; ++j) {
+			for (j =0; j<data.nodes.length; ++j) {
 				data.nodes[j].data.label = String(j);
 				data.nodes[j].buttonMode = true;
 			}
