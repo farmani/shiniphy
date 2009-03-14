@@ -39,7 +39,7 @@ package Database
 			genres = new Array(); //Associative map i.e. genres["comedy"] = 1 or 0;
 			keywords = new Array();
 			
-			if(xnode.childNodes.length < 3){
+			if(xnode.childNodes.length < 6){
 				trace("Too few arguments");
 			}
 			
@@ -49,7 +49,14 @@ package Database
 			netFlixRating = parseInt(xnode.childNodes[3].firstChild);
 			imdbRating = parseInt(xnode.childNodes[4].firstChild);
 			support = parseInt(xnode.childNodes[5].firstChild);
+			var egon:Array = (xnode.childNodes[6].firstChild).split(",");
 			
+			for(var tmp:String in egon){
+				genres.push(parseInt(tmp));
+			}
+			
+			keywords = (xnode.childNodes[7].firstChild).split(",");
+
 		}
 	}
 }
