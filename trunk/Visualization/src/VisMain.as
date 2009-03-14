@@ -58,9 +58,9 @@ package {
 			
 			
 			// make sure to add in right order so that search dropdown is on top
+			this.addChild(movieVis);
 			this.addChild(mainViz);
 			this.addChild(searchMenu);
-			this.addChild(movieVis);
 			// -------------------
 			//stage.addEventListener(Event.REMOVED,appClosed);
 		}		
