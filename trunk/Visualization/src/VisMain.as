@@ -16,7 +16,7 @@ package {
 	public class VisMain extends Sprite
 	{
 		private var conn:ConnectionHandler;
-		private var mainViz:SuggestionHandler;
+		private var dataHandler:SuggestionHandler;
 		private var searchMenu:SearchMenu;
 		private var movieVis:MovieVis;
 		
@@ -38,9 +38,9 @@ package {
 			
 			Security.loadPolicyFile("xmlsocket://" + host + ":" + policyPort);
 			
-			mainViz = new SuggestionHandler();
+			dataHandler = new SuggestionHandler();
 		    movieVis = new MovieVis();
-			conn = new ConnectionHandler(host, chatPort, mainViz);
+			conn = new ConnectionHandler(host, chatPort, dataHandler);
 		
 			movieVis.init();
 			movieVis.play();	
@@ -50,8 +50,8 @@ package {
 			
 			searchMenu = new SearchMenu(conn);
 			
-			mainViz.x = 100;
-			mainViz.y = 50;
+			dataHandler.x = 100;
+			dataHandler.y = 50;
 			
 			searchMenu.x = 125;
 			searchMenu.y = 20;
@@ -59,7 +59,7 @@ package {
 			
 			// make sure to add in right order so that search dropdown is on top
 			this.addChild(movieVis);
-			this.addChild(mainViz);
+			this.addChild(dataHandler);
 			this.addChild(searchMenu);
 			// -------------------
 			//stage.addEventListener(Event.REMOVED,appClosed);
