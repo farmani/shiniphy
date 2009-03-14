@@ -38,8 +38,8 @@ package {
 			
 			Security.loadPolicyFile("xmlsocket://" + host + ":" + policyPort);
 			
-			dataHandler = new SuggestionHandler();
 		    movieVis = new MovieVis();
+			dataHandler = new SuggestionHandler(movieVis );
 			conn = new ConnectionHandler(host, chatPort, dataHandler);
 		
 			movieVis.init();
