@@ -23,7 +23,8 @@ package Database
 		private var movieVis:MovieVis = null;
 		
 		public function SuggestionHandler(mv:MovieVis)
-		{var mvs:Vector.<Movie> = new Vector.<Movie>();
+		{
+			var mvs:Vector.<Movie> = new Vector.<Movie>();
 		
 			movieVis = mv;
 			movies = new Vector.<Movie>(100);
