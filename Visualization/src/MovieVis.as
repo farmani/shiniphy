@@ -133,7 +133,7 @@ package
 			
 			data.nodes.setProperties(opt[idx].nodes);
 			data.edges.setProperties(opt[idx].edges);
-			for (var j:int=0; j<data.nodes.length; ++j) {
+			for (var j:int=0; k<data.nodes.length; ++j) {
 				data.nodes[j].data.label = String(j);
 				data.nodes[j].buttonMode = true;
 			}

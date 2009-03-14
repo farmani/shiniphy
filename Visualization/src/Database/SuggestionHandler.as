@@ -27,7 +27,7 @@ package Database
 			movies = new Vector.<Movie>(100);
 			
 			// set up filter params
-
+			genres = new Array();
 			keywords = new Array();
 			
 			

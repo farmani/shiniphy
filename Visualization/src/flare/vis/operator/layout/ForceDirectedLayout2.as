@@ -103,11 +103,11 @@ package flare.vis.operator.layout
 			while(bfound)
 			{
 				bfound = false;
-				for(var i:uint = 0; i < visualization.data.nodes.length; i++)
+				for(var k:uint = 0; k < visualization.data.nodes.length; k++)
 				{
-					if(visualization.data.nodes[i].die == true)
+					if(visualization.data.nodes[k].die == true)
 					{
-						visualization.data.remove(visualization.data.nodes[i]);
+						visualization.data.remove(visualization.data.nodes[k]);
 						bfound = true;
 					}
 				}
@@ -140,7 +140,7 @@ package flare.vis.operator.layout
 				o.y = p.y;
 					if(isNaN(p.x))
 					{
-						var a;
+						var a:int;
 						a = 0;
 					}
 
@@ -168,7 +168,7 @@ package flare.vis.operator.layout
 					p.x = o.x;
 					p.y = o.y;
 					if(isNaN(o.x)){
-					 var a;
+					 var a:int;
 					  a = 0;	
 					}
 					p.fixed = o.fixed;
