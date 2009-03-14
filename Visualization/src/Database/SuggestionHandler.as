@@ -10,7 +10,6 @@ package Database
 	public class SuggestionHandler extends Sprite
 	{
 		
-		private var resultBox:TextField;
 		private var movies:Vector.<Movie>;
 		
 		// filter stuff
@@ -32,23 +31,11 @@ package Database
 			// set up filter params
 			genres = new Array();
 			keywords = new Array();
-			
-			
-			resultBox = new TextField();
-			resultBox.height = 300;
-			resultBox.width = 300;
-			//resultBox.y = 30;
-			resultBox.background = true;
-			resultBox.type = TextFieldType.DYNAMIC;
-			resultBox.border = true;
-			resultBox.text = "";
-			resultBox.selectable = false;
-			
-			addChild(resultBox);
+
 		}
 		
 		public function newSimilarSet(xnode:XMLNode):void{
-			resultBox.text = "";
+
 			movies.length = 0;
 
 			keywords = [];
