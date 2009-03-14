@@ -71,7 +71,7 @@ package flare.physics
 				//End
 				if(isNaN(p2.fx) || isNaN(fx))
 				{
-				 var a=0;
+				 var a:int=0;
 				 a = 5;
 				}
 				p1.fx += fx; p1.fy += fy;

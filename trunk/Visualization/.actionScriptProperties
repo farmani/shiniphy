@@ -19,7 +19,7 @@
 </excludedEntries>
 </libraryPathEntry>
 <libraryPathEntry kind="3" linkType="1" path="libs/FlashControls.swc" useDefaultLinkType="false"/>
-<libraryPathEntry kind="3" linkType="1" path="C:/Shireesh/CS448b/shiniphy2/flare/build/flare.swc" useDefaultLinkType="false"/>
+<libraryPathEntry kind="3" linkType="1" path="libs/flare.swc" useDefaultLinkType="false"/>
 </libraryPath>
 <sourceAttachmentPath/>
 </compiler>
