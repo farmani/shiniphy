@@ -41,8 +41,8 @@ package
 			var maxsup:int = -1;
 			for(var i:int = 0; i < mvs.length; i++)
 			{
-				if(minsup > mvs[i].support)minsup = mvs[i].support;
-				if(maxsup < mvs[i].support)maxsup = mvs[i].support;
+				if(minsup > mvs[i].score)minsup = mvs[i].score;
+				if(maxsup < mvs[i].score)maxsup = mvs[i].score;
 			}
 			//The main movie
 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
@@ -134,6 +134,7 @@ package
 					{
 						movieArray[i] = null;
 						data.remove(n);
+						continue;
 					}
 				}
 							  
@@ -144,7 +145,8 @@ package
 				n.y=cy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
 				//n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
 				n.setTitle(mvs[i].movieName);
-				n.setPoster("1.jpg");
+				var movieId:int = mvs[i].id-1;
+				n.setPoster("../../flix_images/"+movieId.toString()+".jpg");
 			}
 		}
 		public function init():void
