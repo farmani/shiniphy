@@ -3,6 +3,9 @@
 	<name>Visualization</name>
 	<comment></comment>
 	<projects>
+		<project>flare</project>
+		<project>flare.apps</project>
+		<project>flare.demos</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
