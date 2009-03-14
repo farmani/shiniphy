@@ -14,6 +14,7 @@ package
 	import flare.vis.events.SelectionEvent;
 	import flare.vis.operator.encoder.PropertyEncoder;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
+	import Database.Movie;
 	
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -23,26 +24,144 @@ package
 		private var movieRenderer:MovieRenderer = new MovieRenderer(); 
 		private var opt:Array;
 		private var idx:int = -1;
+		private var rad:Number = 400;
+		private var cx:Number = 400;
+		private var cy:Number = 400;
+		private var data:Data = new Data();
+
 		public function MovieVis()
 		{
 		}
-		public function init():void
+		public function processData(mvs:Vector.<Movie>):void
 		{
-			// create data and set defaults
-			//var data:Data = GraphUtil.diamondTree(3,4,4);
-			var rad:Number = 400;
-			var cx:Number = 400;
-			var cy:Number = 400;
-			opt = options(rad*2, rad*2);
-			idx = 0;
-			var data:Data = new Data();
-			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
-			var angleArr:Array = new Array(3);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
+			data.nodes.clear();
+			
+			//Support range
+			var minsup:int = 1e7;
+			var maxsup:int = -1;
+			for(var i:int = 0; i < mvs.length; i++)
+			{
+				if(minsup > mvs[i].support)minsup = mvs[i].support;
+				if(maxsup < mvs[i].support)maxsup = mvs[i].support;
+			}
+			//The main movie
 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
 			n1.setRating(5); 
 			n1.addGenre("action");
 			n1.setPoster("1.jpg");
 				
+			//The genre
+			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
+			var angleArr:Array = new Array(3);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
+			for(var i:int; i < 3; i++)
+			{
+				r[i]=new MovieSprite(); r[i].fix(); data.addNode(r[i]);
+				r[i].angle2 = angleArr[i];r[i].size = 5; r[i].radial_distance = rad; 
+				r[i].x = cx+rad*Math.cos(r[i].angle2/180*Math.PI);
+				r[i].y = cy+rad*Math.sin(r[i].angle2/180*Math.PI);
+				r[i].data["title"]="Comedy";
+				r[i].alpha = 0;
+			}
+			
+			var movieArray:Array = new Array(20);
+			var j:int;
+			
+			for(i = 0; i < 40 && i < mvs.length; i++)
+			{
+				var n:MovieSprite = new MovieSprite(); 
+				movieArray[i] = n;
+				data.addNode(n);n.rating = mvs[i].netFlixRating;
+				n.renderer = movieRenderer; 
+				var a:Array = new Array(3);
+				var b:Array = new Array(3);
+				
+ 				for(j = 0; j < 3; j++){
+ 					if(Math.random() > 0.5)
+ 						a[j] = 1;
+ 				}
+				j = Math.random()*3;
+				var cnt:int = 0;
+ 				if(a[j] == 1)
+ 					{data.addEdgeFor(r[j],n);b[j]=1;cnt=1;}
+ 				if(a[(j+2)%3] == 1)
+ 					{data.addEdgeFor(r[(j+2)%3],n);b[(j+2)%3]=1;cnt++;}
+ 				else if(a[(j+1)%3] == 1) 		
+ 					{data.addEdgeFor(r[(j+1)%3],n);b[(j+1)%3]=1;cnt++;}
+				if(cnt == 0){j=Math.random()*3;data.addEdgeFor(r[j],n);b[j]=1;cnt=1;}
+				if(b[0] == 1)n.addGenre("romance");
+				if(b[1] == 1)n.addGenre("drama");
+				if(b[2] == 1)n.addGenre("action");
+				if(cnt == 0)n.angle2 = 0;
+				else if(cnt == 1){for(j = 0; j < 3; j++)if(b[j] == 1)n.angle2=angleArr[j];}
+				else {for(j = 0; j < 3; j++)if(b[j] == 1){
+				var j2:int; if(b[(j+2)%3]==1)j2 = (j+2)%3; else j2 =(j+1)%3;
+				n.angle2=(angleArr[j]+angleArr[j2])/2;
+				if(n.angle2 == 0)if(Math.abs(angleArr[j]) > 90)n.angle2 = 180;
+				}}
+				n.radial_distance = Math.random()*150+rad-150; 
+				
+				if(1)// && i > 0)
+				{
+					n.radial_distance = (Math.random()-1)*200+rad; 
+					var bAdded:Boolean = false;
+					var angle:Number = 60;
+					var step:Number = 2;
+					for(j = 0; j < angle; j+=step)
+					{
+						var bintersects:Boolean = false;
+						for(var sign:int = -1; sign<=1 && bAdded == false; sign+=2)
+						{
+							var t:Number = n.angle2+j*sign;
+							n.x=cx+n.radial_distance*Math.cos(t*Math.PI/180);
+							n.y=cy+n.radial_distance*Math.sin(t*Math.PI/180);
+							for(var k:int = 0; k < i;k++)
+							{
+								if(movieArray[k] != null && rectIntersect(n, movieArray[k],60,70)==true)
+								{
+									bintersects = true;
+									break;
+								}
+							}
+							if(bintersects == false)
+							{
+								bAdded = true; 
+								n.angle2 = t;
+								break;
+							}
+						}
+					}
+					if(bAdded == false)
+					{
+						movieArray[i] = null;
+						data.remove(n);
+					}
+				}
+							  
+				//if(i == 0){n.radial_distance = 362; n.angle2 = -60;}
+				//n.angle2 = (i-10)*18; n.radial_distance = rad; 
+					
+				n.x=cx+n.radial_distance*Math.cos(n.angle2*Math.PI/180);
+				n.y=cy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
+				//n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
+				n.setTitle(mvs[i].movieName);
+				n.setPoster("1.jpg");
+			}
+		}
+		public function init():void
+		{
+			// create data and set defaults
+			//var data:Data = GraphUtil.diamondTree(3,4,4);
+			opt = options(rad*2, rad*2);
+			idx = 0;
+			data = new Data();
+
+/* 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
+			n1.setRating(5); 
+			n1.addGenre("action");
+			n1.setPoster("1.jpg");
+				
+			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
+			var angleArr:Array = new Array(3);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
 			for(var i:int; i < 3; i++)
 			{
 				r[i]=new MovieSprite(); r[i].fix(); data.addNode(r[i]);
@@ -134,10 +253,10 @@ package
 				n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
 				n.setPoster("1.jpg");
 			}
-			
+ */			
 			data.nodes.setProperties(opt[idx].nodes);
 			data.edges.setProperties(opt[idx].edges);
-			for (j =0; j<data.nodes.length; ++j) {
+			for (var j:int =0; j<data.nodes.length; ++j) {
 				data.nodes[j].data.label = String(j);
 				data.nodes[j].buttonMode = true;
 			}

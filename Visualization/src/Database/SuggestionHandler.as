@@ -6,7 +6,7 @@ package Database
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.xml.XMLNode;
-
+	
 	public class SuggestionHandler extends Sprite
 	{
 		
@@ -20,10 +20,12 @@ package Database
 		private var filterYearEnd:int = 3000;
 		private var filterPopularityMax:int = 10000000;
 		private var filterPopularityMin:int = 0;
+		private var movieVis:MovieVis = null;
 		
+		public function SuggestionHandler(mv:MovieVis)
+		{var mvs:Vector.<Movie> = new Vector.<Movie>();
 		
-		public function SuggestionHandler()
-		{
+			movieVis = mv;
 			movies = new Vector.<Movie>(100);
 			
 			// set up filter params
@@ -62,6 +64,17 @@ package Database
 			}
 			
 			var egon:Number = 0;
+			if(movieVis != null)
+			{
+				//Just fill dummy genre info
+				for(var i:int = 0; i < movies.length; i++)
+				{
+					movies[i].genres["action"]=Math.random()>0.5?1:0;
+					movies[i].genres["romance"]=Math.random()>0.5?1:0;
+					movies[i].genres["drama"]=Math.random()>0.5?1:0;
+				}
+				movieVis.processData(movies);
+			}
 		}
 		
 		private function filterOnKeyword(id:String, filter:Boolean):void{

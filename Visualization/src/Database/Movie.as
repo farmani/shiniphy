@@ -36,7 +36,7 @@ package Database
 		
 		public function Movie(xnode:XMLNode){
 			
-			genres = new Array();
+			genres = new Array(); //Associative map i.e. genres["comedy"] = 1 or 0;
 			keywords = new Array();
 			
 			if(xnode.childNodes.length < 3){
