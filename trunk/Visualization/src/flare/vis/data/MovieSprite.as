@@ -35,7 +35,7 @@ package flare.vis.data
 		public static var dramaImage: BitmapData  = null;
 		public static var actionImage: BitmapData  = null;
 		public static var romanceImage: BitmapData  = null;
-		public static var posterImage: BitmapData  = null;
+		public var posterImage: BitmapData  = null;
 		public static var closeLoader:Loader = new Loader();
 		public static var closeImage: BitmapData  = null;
 		public static var quesLoader:Loader = new Loader();
