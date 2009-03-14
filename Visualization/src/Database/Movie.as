@@ -49,15 +49,21 @@ package Database
 			netFlixRating = parseInt(xnode.childNodes[3].firstChild);
 			imdbRating = parseInt(xnode.childNodes[4].firstChild);
 			support = parseInt(xnode.childNodes[5].firstChild);
+			
+			var tmpstr:String;
 			if(xnode.childNodes[6].firstChild != null){
-				var egon:Array = (xnode.childNodes[6].firstChild).split(",");
+				tmpstr = xnode.childNodes[6].firstChild;
+				var tmparr:Array = tmpstr.split(",");
 				
-				for(var tmp:String in egon){
-					genres.push(parseInt(tmp));
+				for(var i:int=0;i<tmparr.length;++i){
+					genres.push(parseInt(tmparr[i]));
 				}
 			}
 			if(xnode.childNodes[7].firstChild != null){
-				keywords = (xnode.childNodes[7].firstChild).split(",");
+				
+				tmpstr = xnode.childNodes[7].firstChild;
+				keywords = tmpstr.split(",");
+
 			}
 		}
 	}
