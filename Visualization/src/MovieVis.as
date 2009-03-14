@@ -37,7 +37,7 @@ package
 			idx = 0;
 			var data:Data = new Data();
 			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
-			var angleArr:Array = new Array(3);angleArr[0]=120; angleArr[1]=0; angleArr[2]=-120;
+			var angleArr:Array = new Array(3);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
 			n1.setRating(5); 
 			n1.addGenre("action");
@@ -50,6 +50,7 @@ package
 				r[i].x = cx+rad*Math.cos(r[i].angle2/180*Math.PI);
 				r[i].y = cy+rad*Math.sin(r[i].angle2/180*Math.PI);
 				r[i].data["title"]="Comedy";
+				r[i].alpha = 0;
 			}
 			var movieArray:Array = new Array(20);
 			for(i = 0; i < 30; i++)
