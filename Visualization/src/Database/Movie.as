@@ -9,7 +9,7 @@ package Database
 		public var id:int = -1;
 		public var movieName:String = "";
 		public var score:Number = 0;
-		
+		/*
 		public var svdC10:int = -1;
 		public var svdC50:int = -1;
 		public var svdC200:int = -1;
@@ -21,6 +21,7 @@ package Database
 		public var keywordsC10:int = -1;
 		public var keywordsC50:int = -1;
 		public var keywordsC500:int = -1;
+		*/
 		
 		public var support:int = -1;
 		
@@ -28,9 +29,15 @@ package Database
 		public var imdbRating:Number = 0;
 		public var netFlixRating:Number = 0;
 		
+		public var genres:Array;
+		public var keywords:Array;
 		
+		public var filtered:Boolean = false;
 		
 		public function Movie(xnode:XMLNode){
+			
+			genres = new Array();
+			keywords = new Array();
 			
 			if(xnode.childNodes.length < 3){
 				trace("Too few arguments");

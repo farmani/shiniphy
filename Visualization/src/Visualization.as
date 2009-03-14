@@ -45,12 +45,16 @@ package {
 			
 			searchMenu = new SearchMenu(conn);
 			
-			mainViz.x = 300;
-			mainViz.y = 20;
+			mainViz.x = 100;
+			mainViz.y = 50;
 			
-			this.addChild(searchMenu);
+			searchMenu.x = 125;
+			searchMenu.y = 20;
+			
+			
+			// make sure to add in right order so that search dropdown is on top
 			this.addChild(mainViz);
-			
+			this.addChild(searchMenu);
 			
 			// -------------------
 			
