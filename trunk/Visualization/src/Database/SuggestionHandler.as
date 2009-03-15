@@ -15,10 +15,15 @@ package Database
 		// filter stuff
 		private var keywords:Array;
 		private var genres:Array;
+		private var years:Array;
+		
+		
 		private var filterYearStart:int = 0;
 		private var filterYearEnd:int = 3000;
 		private var filterPopularityMax:int = 10000000;
 		private var filterPopularityMin:int = 0;
+		
+		
 		private var movieVis:MovieVis = null;
 		
 		public function SuggestionHandler(mv:MovieVis)
@@ -40,29 +45,21 @@ package Database
 
 			keywords = [];
 			genres = [];
+			years = [];
+			
+			var mov:Movie;
 			
 			xnode = xnode.firstChild;
 			while( xnode != null ){
 				if( xnode.nodeName == "movie" ){
 					
-					movies.push(new Movie(xnode));
+					mov = new Movie(xnode);
+					movies.push(mov);
 
 				}
 				xnode = xnode.nextSibling;
 			}
 			
-			var egon:Number = 0;
-			if(movieVis != null)
-			{
-				//Just fill dummy genre info
-				for(var i:int = 0; i < movies.length; i++)
-				{
-					movies[i].genres["action"]=Math.random()>0.5?1:0;
-					movies[i].genres["romance"]=Math.random()>0.5?1:0;
-					movies[i].genres["drama"]=Math.random()>0.5?1:0;
-				}
-				movieVis.processData(movies);
-			}
 		}
 		
 		private function filterOnKeyword(id:String, filter:Boolean):void{

@@ -8,20 +8,13 @@ package Database
 		
 		public var id:int = -1;
 		public var movieName:String = "";
+		
 		public var score:Number = 0;
-		/*
-		public var svdC10:int = -1;
-		public var svdC50:int = -1;
-		public var svdC200:int = -1;
-		
-		public var genreC10:int = -1;
-		public var genreC50:int = -1;
-		public var genreC100:int = -1;
-		
-		public var keywordsC10:int = -1;
-		public var keywordsC50:int = -1;
-		public var keywordsC500:int = -1;
-		*/
+		public var keywordScore:Number = 0;
+		public var genreScore:Number = 0;
+		public var directorScore:Number = 0;
+		public var similarRatingScore:Number = 0;
+		public var yearScore:Number = 0;
 		
 		public var support:int = -1;
 		
@@ -39,29 +32,36 @@ package Database
 			genres = new Array(); //Associative map i.e. genres["comedy"] = 1 or 0;
 			keywords = new Array();
 			
-			if(xnode.childNodes.length < 6){
+			if(xnode.childNodes.length < 11){
 				trace("Too few arguments");
 			}
 			
 			id = parseInt(xnode.childNodes[0].firstChild);
 			movieName = xnode.childNodes[1].firstChild;
+			
 			score = parseFloat(xnode.childNodes[2].firstChild);
-			netFlixRating = parseInt(xnode.childNodes[3].firstChild);
-			imdbRating = parseInt(xnode.childNodes[4].firstChild);
-			support = parseInt(xnode.childNodes[5].firstChild);
+			keywordScore = parseFloat(xnode.childNodes[3].firstChild);
+			genreScore = parseFloat(xnode.childNodes[4].firstChild);
+			directorScore = parseFloat(xnode.childNodes[5].firstChild);
+			similarRatingScore = parseFloat(xnode.childNodes[6].firstChild);
+			yearScore = parseFloat(xnode.childNodes[7].firstChild);
+			
+			netFlixRating = parseInt(xnode.childNodes[8].firstChild);
+			imdbRating = parseInt(xnode.childNodes[9].firstChild);
+			support = parseInt(xnode.childNodes[10].firstChild);
 			
 			var tmpstr:String;
-			if(xnode.childNodes[6].firstChild != null){
-				tmpstr = xnode.childNodes[6].firstChild;
+			if(xnode.childNodes[11].firstChild != null){
+				tmpstr = xnode.childNodes[11].firstChild;
 				var tmparr:Array = tmpstr.split(",");
 				
 				for(var i:int=0;i<tmparr.length;++i){
 					genres.push(parseInt(tmparr[i]));
 				}
 			}
-			if(xnode.childNodes[7].firstChild != null){
+			if(xnode.childNodes[12].firstChild != null){
 				
-				tmpstr = xnode.childNodes[7].firstChild;
+				tmpstr = xnode.childNodes[12].firstChild;
 				keywords = tmpstr.split(",");
 
 			}
