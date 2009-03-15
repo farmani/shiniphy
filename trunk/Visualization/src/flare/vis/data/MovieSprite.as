@@ -106,7 +106,7 @@ package flare.vis.data
 				props.particle.die = true;
 				die = true;
 			}
-			else if(event.localX >=iconw && event.localX < 2*iconw && event.localY > posterh-iconh)
+			else if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
 			{
 				//INFO BOX
 			}
