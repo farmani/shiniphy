@@ -32,23 +32,25 @@ package
 		public function MovieVis()
 		{
 		}
+		
 		public function processData(mvs:Vector.<Movie>):void
 		{
 			data.nodes.clear();
 			
 			//Support range
-			var minsup:int = 1e7;
-			var maxsup:int = -1;
+			var minsup:Number = 1e7;
+			var maxsup:Number = -1;
 			for(var i:int = 0; i < mvs.length; i++)
 			{
-				if(minsup > mvs[i].score)minsup = mvs[i].score;
-				if(maxsup < mvs[i].score)maxsup = mvs[i].score;
+				if(minsup > mvs[i].netFlixRating)minsup = mvs[i].netFlixRating;
+				if(maxsup < mvs[i].netFlixRating)maxsup = mvs[i].netFlixRating;
 			}
 			//The main movie
 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
-			n1.setRating(5); 
-			n1.addGenre("action");
-			n1.setPoster("1.jpg");
+			n1.setRating((mvs[0].netFlixRating+1)/2); 
+			n1.addGenre(0);
+			var movieId:int = mvs[0].id-1;
+			n1.setPoster("../../flix_images/"+movieId.toString()+".jpg");
 				
 			//The genre
 			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
@@ -66,11 +68,11 @@ package
 			var movieArray:Array = new Array(20);
 			var j:int;
 			
-			for(i = 0; i < 40 && i < mvs.length; i++)
+			for(i = 1; i < 80 && i < mvs.length; i++)
 			{
 				var n:MovieSprite = new MovieSprite(); 
 				movieArray[i] = n;
-				data.addNode(n);n.rating = mvs[i].netFlixRating;
+				data.addNode(n);n.rating = (mvs[i].netFlixRating+1)/2;
 				n.renderer = movieRenderer; 
 				var a:Array = new Array(3);
 				var b:Array = new Array(3);
@@ -88,9 +90,9 @@ package
  				else if(a[(j+1)%3] == 1) 		
  					{data.addEdgeFor(r[(j+1)%3],n);b[(j+1)%3]=1;cnt++;}
 				if(cnt == 0){j=Math.random()*3;data.addEdgeFor(r[j],n);b[j]=1;cnt=1;}
-				if(b[0] == 1)n.addGenre("romance");
-				if(b[1] == 1)n.addGenre("drama");
-				if(b[2] == 1)n.addGenre("action");
+				if(b[0] == 1)n.addGenre(0);
+				if(b[1] == 1)n.addGenre(1);
+				if(b[2] == 1)n.addGenre(2);
 				if(cnt == 0)n.angle2 = 0;
 				else if(cnt == 1){for(j = 0; j < 3; j++)if(b[j] == 1)n.angle2=angleArr[j];}
 				else {for(j = 0; j < 3; j++)if(b[j] == 1){
@@ -116,7 +118,7 @@ package
 							n.y=cy+n.radial_distance*Math.sin(t*Math.PI/180);
 							for(var k:int = 0; k < i;k++)
 							{
-								if(movieArray[k] != null && rectIntersect(n, movieArray[k],60,70)==true)
+								if(movieArray[k] != null && rectIntersect(n, movieArray[k],75,75)==true)
 								{
 									bintersects = true;
 									break;
