@@ -16,7 +16,7 @@ package {
 	import flash.events.MouseEvent;
 	import flash.system.Security;
 
-	[SWF(width="850", height="800", backgroundColor="#ffffff", frameRate="30")]
+	[SWF(width="1500", height="1000", backgroundColor="#ffffff", frameRate="30")]
 	
 	public class VisMain extends Sprite
 	{

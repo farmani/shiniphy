@@ -1,5 +1,7 @@
 package 
 {
+	import Database.Keyword;
+	
 	import MainInfo.InfoBox;
 	
 	import __AS3__.vec.Vector;
@@ -18,6 +20,7 @@ package
 	import flare.vis.operator.layout.ForceDirectedLayout2;
 	
 	import Database.Movie;
+	//import Database.Movie;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	public class MovieVis extends Sprite
@@ -30,7 +33,7 @@ package
 		private var cx:Number = 400;
 		private var cy:Number = 400;
 		private var data:Data = new Data();
-
+		
 		public function MovieVis(ibox:InfoBox)
 		{
 			MovieSprite.infoBox = ibox;
@@ -52,6 +55,7 @@ package
 			}
 			return 0;
 		}
+		
 		public function processData(mvs:Vector.<Movie>):void
 		{
 			data.nodes.clear();
@@ -59,11 +63,27 @@ package
 			//Support range
 			var minsup:Number = 1e7;
 			var maxsup:Number = -1;
+			for(var i:int = 1; i < mvs.length; i++)
+			{
+				if(minsup > mvs[i].score)minsup = mvs[i].score;
+				if(maxsup < mvs[i].score)maxsup = mvs[i].score;
+			}
+			var genreArray:Array = new Array();
+			//Compute the genre score
 			for(var i:int = 0; i < mvs.length; i++)
 			{
-				if(minsup > mvs[i].netFlixRating)minsup = mvs[i].netFlixRating;
-				if(maxsup < mvs[i].netFlixRating)maxsup = mvs[i].netFlixRating;
+				for(var j:int = 0; j < mvs[i].genres.length; j++)
+				{
+					var map:int = mapGenre(mvs[i].genres[j]);
+						if(genreArray[map] == null)
+							genreArray[map] = new Keyword(map);
+						else
+							(genreArray[map] as Keyword).count++;
+				}
 			}
+			//Sort the array
+			genreArray.sortOn("count",Array.NUMERIC | Array.DESCENDING);
+
 			//The main movie
 			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
 			n1.setRating((mvs[0].netFlixRating+1)/2); 
@@ -71,9 +91,15 @@ package
 			var movieId:int = mvs[0].id-1;
 			n1.setPoster("../../flix_images/"+movieId.toString()+".jpg");
 				
-			//The genre
+			//Compute the number of Genre
+			for(var i:int = 0; i < 4; i++)
+				if((genreArray[0] as Keyword).count > 2.5*(genreArray[i] as Keyword).count)//Should be less than this
+					break;
+			var numGenre:int = i;
+			
+			//Layout the genre's 
 			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
-			var angleArr:Array = new Array(3);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
+			var angleArr:Array = new Array(numGenre);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
 			for(var i:int; i < 3; i++)
 			{
 				r[i]=new MovieSprite(); r[i].fix(); data.addNode(r[i]);
@@ -123,7 +149,7 @@ package
 				
 				if(1)// && i > 0)
 				{
-					n.radial_distance = (Math.random()-1)*200+rad; 
+					n.radial_distance = (minsup-mvs[i].score)/(maxsup-minsup)*150+rad; 
 					var bAdded:Boolean = false;
 					var angle:Number = 60;
 					var step:Number = 2;
