@@ -4,45 +4,70 @@ package Filter
 	import fl.events.SliderEvent;
 	
 	import flash.display.Sprite;
-	import flash.text.TextFormat;
-	import com.dougmccune.controls.*;
+	
 	
 	public class YearFilter extends Sprite
 	{
 		
 		//private var _fmt:TextFormat = new TextFormat("Helvetica,Arial",18,0,true,false);
 	    private var lastVisitDateSlider:Slider;
-	    private var yearSlider:com.dougmccune.controls.VSlider;
+	    private var yearSlider:Slider;
+	    private var yearSlider2:Slider;
+	    private var myParent:FilterHandler;
 
-		public function YearFilter()
+		public function YearFilter(myParent:FilterHandler)
 		{
-            yearSlider = new com.dougmccune.controls.VSlider();
-//			yearSlider.trackHighlightSkin ="com.dougmccune.skins.SliderThumbHighlightSkin";
-            yearSlider.allowTrackClick=true;
-            yearSlider.allowThumbOverlap=true;             
-            yearSlider.liveDragging=true; 
-            yearSlider.showDataTip=true;  
-            yearSlider.thumbCount=2;  
-            yearSlider.values=[-2000, 4000];
+            this.myParent = myParent;
 
-			yearSlider.x = 100;
-			yearSlider.y = 100;
-			
-            yearSlider.minimum = 0;
-            yearSlider.maximum = 18;
+			yearSlider = new Slider();
+            yearSlider.x = 60;
+            yearSlider.y = 101;
+            yearSlider.snapInterval = 10;
             yearSlider.width = 200;
-            yearSlider.value = 0;
+            yearSlider.value = 1880;
+            yearSlider.minimum = 1880;
+            yearSlider.maximum = 2005;
             yearSlider.addEventListener( SliderEvent.CHANGE, updateYearFilter );
-            this.addChild( yearSlider );
+            
+            
+            yearSlider2 = new Slider();
+            yearSlider2.x = 60;
+            yearSlider2.y = 101;
+            yearSlider2.snapInterval = 10;
+            yearSlider2.width = 200;
+            yearSlider2.minimum = 1880;
+            yearSlider2.maximum = 2005;
+            yearSlider2.value = 2005;
+            yearSlider2.addEventListener( SliderEvent.CHANGE, updateYearFilter );
+
+			//yearSlider.addChild(yearSlider2.getChildAt(0));
+			//yearSlider.setChildIndex(yearSlider.getChildAt(2), yearSlider.numChildren-1);
+			//yearSlider.getChildAt(0).visible = false;
+			yearSlider2.getChildAt(0).visible = false;
+
+			// TODO add dragger between them
+			this.addChild( yearSlider );
+            this.addChild( yearSlider2 );
+            
  		}
 		
-		private function setYearRange(years:int):void
-		{
- 		}		
+		public function reset():void{
+			
+			yearSlider.value = 1880;
+			yearSlider2.value = 2005;
+			
+			
+		}		
  			
 	       
-	private function updateYearFilter( sliderEvent:SliderEvent ):void
+		private function updateYearFilter( sliderEvent:SliderEvent ):void
         {
+        	
+        	var min:int = Math.min(yearSlider2.value,yearSlider.value);
+        	var max:int = Math.max(yearSlider2.value,yearSlider.value);
+        	
+        	myParent.setTimeRange(min, max);
+        	
         }
 	}
 }

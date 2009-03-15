@@ -78,6 +78,8 @@ package flare.vis.data
 			_load_icons1(quesLoader, "question", "question.png");
 			_load_icons1(starLoader, "star", "star.png");
 			
+			
+			
 		}
 		public function redraw(gin:Graphics = null):void
 		{
@@ -118,6 +120,9 @@ package flare.vis.data
 				infoBox.setBackgroundImage(s);
 				isHover = _ishover;
 				infoBox.visible = true;
+				
+				
+				//infoBox.setMovie(mov);
 			}
 		}
 		protected function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void

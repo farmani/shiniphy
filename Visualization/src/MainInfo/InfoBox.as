@@ -1,6 +1,9 @@
 package MainInfo
 {
-	import flash.display.Bitmap;
+	import Database.Movie;
+	
+	import fl.controls.TextArea;
+	
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -12,11 +15,15 @@ package MainInfo
 	{
 		
 		private var backgroundImg:Loader;
-		private var info:TextField;
+		private var info:TextArea;
 		private var whyBox:TextField;
 		private var bkSprite:Sprite = null;
+		private var movie:Movie;
+		
 		public function InfoBox()
 		{
+			
+			movie = null;
 			
 			//this.visible = false;
 			var urlRequest:URLRequest = new URLRequest("../images/mainInfo.png");
@@ -24,14 +31,16 @@ package MainInfo
 			backgroundImg.contentLoaderInfo.addEventListener(Event.COMPLETE, setLoaded );
 			backgroundImg.load( urlRequest );
 			
-			info = new TextField();
+			info = new TextArea();
 			info.x = 25;
 			info.y = 41;
 			info.width = 333;
 			info.height = 360;
-			info.multiline = true;
+			//info.multiline = true;
 			//info.border = true;
 			info.wordWrap = true;
+			info.textField.border = false;
+			info.setStyle("upSkin",Sprite);
 			
 			info.htmlText = "a";
 			
@@ -69,6 +78,12 @@ package MainInfo
       		setChildIndex(backgroundImg, 0);
       		
       	}
+      	
+      	private function setMovie(mov:Movie):void{
+      		movie = mov;
+      		
+      	}
+      	
       	public function setBackgroundImage(s:Sprite):void
       	{
       		if(bkSprite != null)

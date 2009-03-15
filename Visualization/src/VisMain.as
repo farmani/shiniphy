@@ -2,6 +2,8 @@ package {
 	import Database.ConnectionHandler;
 	import Database.SuggestionHandler;
 	
+	import Filter.FilterHandler;
+	
 	import MainInfo.InfoBox;
 	
 	import Search.SearchMenu;
@@ -23,6 +25,7 @@ package {
 		private var searchMenu:SearchMenu;
 		private var movieVis:MovieVis;
 		private var infoBox:InfoBox;
+		private var filterHandler:FilterHandler;
 		
 		public function VisMain()
 		{
@@ -44,15 +47,16 @@ package {
 			
 			infoBox = new InfoBox();
 		    movieVis = new MovieVis(infoBox);
+		    filterHandler = new FilterHandler();
 		    
-			dataHandler = new SuggestionHandler(movieVis );
-			dataHandler.x = 100;
-			dataHandler.y = 50;
+			dataHandler = new SuggestionHandler(movieVis, filterHandler);
 			
 			conn = new ConnectionHandler(host, chatPort, dataHandler);
 		
 			movieVis.init();
-			movieVis.play();	
+			movieVis.play();
+			
+			filterHandler.init(dataHandler);
 			// ./act -h 174.129.187.48 -U psi -w pass19wd -d psi
 			//conn.setUpDatabase("174.129.187.48", "psi", "pass19wd", "psi");
 			conn.Connect();
@@ -63,11 +67,14 @@ package {
 			
 			
 			
+			
+			
+			
 			// make sure to add in right order so that search dropdown is on top
 			
 			this.addChild(movieVis);
+			this.addChild(filterHandler);
 			this.addChild(infoBox);
-			this.addChild(dataHandler);
 			this.addChild(searchMenu);
 			// -------------------
 			//stage.addEventListener(Event.REMOVED,appClosed);
