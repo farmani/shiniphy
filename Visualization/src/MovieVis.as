@@ -37,14 +37,14 @@ package
 		{
 			switch(g)
 			{
-				case 1: return 0;
-				case 2: return 0;
-				case 3: return 0;
-				case 4: return 0;
-				case 5: return 0;
-				case 6: return 0;
-				case 7: return 0;
-				case 8: return 0;
+				case 1: case 17: return 2;//Romance;
+				case 19: return 5;//Horror;
+				case 2: case 3: case 6: case 7: case 9: case 10: case 12: case 15: case 18: return 0;//drama ;
+				case 4: case 16: case 8: case 22: return 1;//action;
+				case 5: return 3;//Comedy
+				case 13: case 14: return 4;//Sci-Fi; 
+				case 11: case 20: case 21: return 6;//thriller
+				case 23: case 24: case 25: case 26: case 27: case 28: return 7;//Misc
 			}
 			return 0;
 		}
