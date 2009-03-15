@@ -110,8 +110,9 @@ package Search
 		
 		public function performSimilaritySearch(id:int):void{
 			
-			conn.findSimilar(id);
 			resultArea.visible = false;
+			conn.findSimilar(id);
+			
 			
 		}
 		
@@ -121,10 +122,10 @@ package Search
 				resultArea.visible = false;
 			}else{
 				
-				if(evt.localX > 250 || evt.localX < 0 || evt.localY < 0 || evt.localY > 20){
-					resultArea.visible = false;
-				}else{
+				if(evt.stageX < 250 + this.x && evt.stageX > this.x && evt.stageY > this.y && evt.stageY < 20 + this.y){
 					resultArea.visible = true;
+				}else{
+					resultArea.visible = false;
 				}
 				
 				

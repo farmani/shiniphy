@@ -54,12 +54,14 @@ package flare.vis.data
 			super();
 			addEventListener(MouseEvent.CLICK,onRemoveMovie);
 		}
+		
 		protected static function _load_icons1(l:Loader, s:String, file:String):void
 		{
 			l.name=s; 
 			l.contentLoaderInfo.addEventListener(Event.COMPLETE, itemLoaded);
 			l.load( new URLRequest(file));
 		}
+		
 		public static function load_icons():void
 		{
 			for(var i:int = 0; i < MAX_GENRE ; i++)

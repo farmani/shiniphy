@@ -72,16 +72,13 @@ package MainInfo
       	private function mouseDown(e:MouseEvent):void{
       		
       		if(e.localY > 0 && e.localY < 20){
-      			if(e.localX > 559 && e.localX < 575){
+      			if(e.localX > 546 && e.localX < 562){
       				stopDrag();
       				visible = false;
       			}else{
       				this.startDrag();
       			}
-      			
       		}
-      		
-      		
       	}
       	
       	private function mouseUp(e:MouseEvent):void{
