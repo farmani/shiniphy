@@ -3,8 +3,7 @@ package Database
 	import __AS3__.vec.Vector;
 	
 	import flash.display.Sprite;
-	import flash.text.TextField;
-	import flash.text.TextFieldType;
+	import flash.utils.Dictionary;
 	import flash.xml.XMLNode;
 	
 	public class SuggestionHandler extends Sprite
@@ -14,8 +13,8 @@ package Database
 		
 		// filter stuff
 		private var keywords:Array;
-		private var genres:Array;
-		private var years:Array;
+		private var genres:Vector.<Genre>;
+		private var years:Dictionary;
 		
 		
 		private var filterYearStart:int = 0;
@@ -28,14 +27,18 @@ package Database
 		
 		public function SuggestionHandler(mv:MovieVis)
 		{
-			var mvs:Vector.<Movie> = new Vector.<Movie>();
 		
 			movieVis = mv;
 			movies = new Vector.<Movie>(100);
 			
 			// set up filter params
-			genres = new Array();
+			genres = new Vector.<Genre>(29);
 			keywords = new Array();
+			years = new Dictionary();
+			
+			for(var i:int=0;i<29;++i){
+				genres[i] = new Genre();
+			}
 
 		}
 		
@@ -43,9 +46,24 @@ package Database
 
 			movies.length = 0;
 
+			var val:String;
+			var key:int;
+			// clear out the dictionarys
+			for(val in years){
+				delete years[val];
+			}
+			
 			keywords = [];
-			genres = [];
-			years = [];
+			
+			//for(val in keywords){
+			//	delete keywords[val];
+			//}
+			
+			for(var i:int=0;i<genres.length;++i){
+				genres[i].count = 1;
+				genres[i].filtered = false;
+			}
+			
 			
 			var mov:Movie;
 			
@@ -54,11 +72,40 @@ package Database
 				if( xnode.nodeName == "movie" ){
 					
 					mov = new Movie(xnode);
+					
+					if(years[mov.year] == null){
+						years[mov.year] = 1;
+					}else{
+						years[mov.year]++;
+					}
+					
+					for each (key in mov.keywords){
+						if(keywords[key] == null)
+						{
+							keywords[key] = new Keyword(key);
+						}
+						else
+						{
+							(keywords[key] as Keyword).count++;
+						}
+						
+					}
+					
+					for each(key in mov.genres){
+						genres[key].count++;
+					}
+
+					
 					movies.push(mov);
 
 				}
 				xnode = xnode.nextSibling;
 			}
+			
+			keywords.sortOn("count",Array.NUMERIC | Array.DESCENDING);
+			keywords.length = 20;
+			
+			movieVis.processData(movies);
 			
 		}
 		

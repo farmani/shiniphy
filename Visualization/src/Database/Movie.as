@@ -46,22 +46,24 @@ package Database
 			similarRatingScore = parseFloat(xnode.childNodes[6].firstChild);
 			yearScore = parseFloat(xnode.childNodes[7].firstChild);
 			
-			netFlixRating = parseInt(xnode.childNodes[8].firstChild);
-			imdbRating = parseInt(xnode.childNodes[9].firstChild);
-			support = parseInt(xnode.childNodes[10].firstChild);
+			year = parseInt(xnode.childNodes[8].firstChild);
+			
+			netFlixRating = parseInt(xnode.childNodes[9].firstChild);
+			imdbRating = parseInt(xnode.childNodes[10].firstChild);
+			support = parseInt(xnode.childNodes[11].firstChild);
 			
 			var tmpstr:String;
-			if(xnode.childNodes[11].firstChild != null){
-				tmpstr = xnode.childNodes[11].firstChild;
+			if(xnode.childNodes[12].firstChild != null){
+				tmpstr = xnode.childNodes[12].firstChild;
 				var tmparr:Array = tmpstr.split(",");
 				
 				for(var i:int=0;i<tmparr.length;++i){
 					genres.push(parseInt(tmparr[i]));
 				}
 			}
-			if(xnode.childNodes[12].firstChild != null){
+			if(xnode.childNodes[13].firstChild != null){
 				
-				tmpstr = xnode.childNodes[12].firstChild;
+				tmpstr = xnode.childNodes[13].firstChild;
 				keywords = tmpstr.split(",");
 
 			}
