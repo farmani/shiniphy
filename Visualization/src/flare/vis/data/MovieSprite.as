@@ -1,11 +1,13 @@
 package flare.vis.data
 {
+	import MainInfo.InfoBox;
+	
 	import __AS3__.vec.Vector;
 	
 	import fl.controls.Label;
 	
-	import flash.display.BitmapData;
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -26,6 +28,8 @@ package flare.vis.data
 		public var rating: int = 0;
 		protected var lastGenreHt:int = 0;
 		public static var loadedCount:int = 0;
+		public static var infoBox:InfoBox;
+
 		public static var MAX_GENRE:int = 8;
 		public static var genreLoader:Vector.<Loader> = new Vector.<Loader>(MAX_GENRE);
 		public static var genreImage:Vector.<BitmapData> = new Vector.<BitmapData>(MAX_GENRE);
@@ -108,7 +112,10 @@ package flare.vis.data
 			}
 			else if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
 			{
-				//INFO BOX
+				var s:Sprite = new Sprite();
+				redraw(s.graphics);
+				infoBox.setBackgroundImage(s);
+				infoBox.visible = true;
 			}
 		}
 		protected function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void

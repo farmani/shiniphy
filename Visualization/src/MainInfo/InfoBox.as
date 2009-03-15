@@ -1,5 +1,6 @@
 package MainInfo
 {
+	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -13,7 +14,7 @@ package MainInfo
 		private var backgroundImg:Loader;
 		private var info:TextField;
 		private var whyBox:TextField;
-		
+		private var bkSprite:Sprite = null;
 		public function InfoBox()
 		{
 			
@@ -66,9 +67,16 @@ package MainInfo
       	
       		this.addChild(backgroundImg);
       		setChildIndex(backgroundImg, 0);
-      	
+      		
       	}
-      	
+      	public function setBackgroundImage(s:Sprite):void
+      	{
+      		if(bkSprite != null)
+      			removeChild(bkSprite);
+      		bkSprite = s;
+      		bkSprite.x = 396; bkSprite.y = 41;
+      		addChild(bkSprite);
+      	}
       	private function mouseDown(e:MouseEvent):void{
       		
       		if(e.localY > 0 && e.localY < 20){
