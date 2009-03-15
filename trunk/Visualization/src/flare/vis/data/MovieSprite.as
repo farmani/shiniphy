@@ -114,7 +114,9 @@ package flare.vis.data
 			{
 				var s:Sprite = new Sprite();
 				redraw(s.graphics);
+				var _ishover:Boolean = isHover; isHover = false;
 				infoBox.setBackgroundImage(s);
+				isHover = _ishover;
 				infoBox.visible = true;
 			}
 		}
