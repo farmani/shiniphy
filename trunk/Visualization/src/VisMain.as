@@ -42,7 +42,8 @@ package {
 			
 			Security.loadPolicyFile("xmlsocket://" + host + ":" + policyPort);
 			
-		    movieVis = new MovieVis();
+			infoBox = new InfoBox();
+		    movieVis = new MovieVis(infoBox);
 		    
 			dataHandler = new SuggestionHandler(movieVis );
 			dataHandler.x = 100;
@@ -60,7 +61,6 @@ package {
 			searchMenu.x = 125;
 			searchMenu.y = 20;
 			
-			infoBox = new InfoBox();
 			
 			
 			// make sure to add in right order so that search dropdown is on top
@@ -75,7 +75,7 @@ package {
 			stage.addEventListener(MouseEvent.CLICK, mouseClick);
 		}
 		
-		private function mouseClick(e:MouseEvent){
+		private function mouseClick(e:MouseEvent):void{
 			
 			
 			searchMenu.mouseDown(e);

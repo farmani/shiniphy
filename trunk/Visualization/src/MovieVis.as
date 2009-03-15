@@ -1,5 +1,7 @@
 package 
 {
+	import MainInfo.InfoBox;
+	
 	import __AS3__.vec.Vector;
 	
 	import flare.HoverControl2;
@@ -14,8 +16,8 @@ package
 	import flare.vis.events.SelectionEvent;
 	import flare.vis.operator.encoder.PropertyEncoder;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
-	import Database.Movie;
 	
+	import Database.Movie;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	public class MovieVis extends Sprite
@@ -29,8 +31,10 @@ package
 		private var cy:Number = 400;
 		private var data:Data = new Data();
 
-		public function MovieVis()
+		public function MovieVis(ibox:InfoBox)
 		{
+			MovieSprite.infoBox = ibox;
+			ibox.visible = false;
 		}
 		
 		public static function mapGenre(g:int):int
