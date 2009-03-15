@@ -75,9 +75,9 @@ package flare.vis.data
 			_load_icons1(starLoader, "star", "star.png");
 			
 		}
-		public function redraw():void
+		public function redraw(gin:Graphics = null):void
 		{
-			var g:Graphics = graphics;
+			var g:Graphics = gin==null?graphics:gin;
 			if(posterImage != null)posterh = posterImage.height;
 			g.clear();
 			g.beginFill(0,0);

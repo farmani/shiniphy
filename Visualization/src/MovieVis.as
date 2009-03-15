@@ -33,6 +33,21 @@ package
 		{
 		}
 		
+		public static function mapGenre(g:int):int
+		{
+			switch(g)
+			{
+				case 1: return 0;
+				case 2: return 0;
+				case 3: return 0;
+				case 4: return 0;
+				case 5: return 0;
+				case 6: return 0;
+				case 7: return 0;
+				case 8: return 0;
+			}
+			return 0;
+		}
 		public function processData(mvs:Vector.<Movie>):void
 		{
 			data.nodes.clear();
