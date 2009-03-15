@@ -32,7 +32,7 @@ package Database
 			genres = new Array(); //Associative map i.e. genres["comedy"] = 1 or 0;
 			keywords = new Array();
 			
-			if(xnode.childNodes.length < 11){
+			if(xnode.childNodes.length < 14){
 				trace("Too few arguments");
 			}
 			
@@ -61,7 +61,7 @@ package Database
 					genres.push(parseInt(tmparr[i]));
 				}
 			}
-			if(xnode.childNodes[13].firstChild != null){
+			if(xnode.childNodes[13] != null && xnode.childNodes[13].firstChild != null){
 				
 				tmpstr = xnode.childNodes[13].firstChild;
 				keywords = tmpstr.split(",");

@@ -1,12 +1,10 @@
 package flare.vis.data
 {
+	import __AS3__.vec.Vector;
+	
 	import fl.controls.Label;
 	
-	import flare.vis.data.Data;
-	import flare.vis.data.NodeSprite;
-	
 	import flash.display.BitmapData;
-	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -27,32 +25,34 @@ package flare.vis.data
 		public var rating: int = 0;
 		protected var lastGenreHt:int = 0;
 		public static var loadedCount:int = 0;
-		public static var dramaLoader:Loader = new Loader();
-		public static var actionLoader:Loader = new Loader();
-		public static var romanceLoader:Loader = new Loader();
-		public static var starLoader:Loader = new Loader();
-		public static var starImage: BitmapData  = null;
-		public static var dramaImage: BitmapData  = null;
-		public static var actionImage: BitmapData  = null;
-		public static var romanceImage: BitmapData  = null;
-		public var posterImage: BitmapData  = null;
+		public static var MAX_GENRE:int = 8;
+		public static var genreLoader:Vector.<Loader> = new Vector.<Loader>(MAX_GENRE);
+		public static var genreImage:Vector.<BitmapData> = new Vector.<BitmapData>(MAX_GENRE);
+		public static var genrePaths:Vector.<String> = new Vector.<String>(MAX_GENRE);
+
 		public static var closeLoader:Loader = new Loader();
-		public static var closeImage: BitmapData  = null;
 		public static var quesLoader:Loader = new Loader();
-		public static var quesImage: BitmapData  = null;
-		public var imageArray:Array = new Array();
+		public static var starLoader:Loader = new Loader();
+
+		public static var closeImage:BitmapData = null;
+		public static var quesImage:BitmapData = null;
+		public static var starImage:BitmapData = null;
+		public var posterImage: BitmapData  = null;
+		public var imageArray:Array = new Array(10);
 		public var isHover:Boolean = false;
 		public var quesSprite:Sprite = new Sprite();
 		public var closeSprite:Sprite = new Sprite();
 		
+		public var posterw:int = 110, posterh:int = 150;
+		public var iconw:int =16, iconh:int = 16;
+		public var starw:int = 20, starh:int = 20;
+			
 		public function MovieSprite()
 		{
 			radial_distance = 0;
 			angle2 = 0;
 			super();
 			addEventListener(MouseEvent.CLICK,onRemoveMovie);
-			//width = 100;
-			//height = 140;
 		}
 		protected static function _load_icons1(l:Loader, s:String, file:String):void
 		{
@@ -62,52 +62,52 @@ package flare.vis.data
 		}
 		public static function load_icons():void
 		{
-			_load_icons1(actionLoader,"action","bomb.jpg");
-			_load_icons1(dramaLoader,"action","drama2.jpg");
-			_load_icons1(romanceLoader,"action","hearticon.jpg");
-			_load_icons1(starLoader,"action","star.jpg");
-			_load_icons1(closeLoader,"close","close.jpg");
-			_load_icons1(quesLoader,"question","question.jpg");
+			for(var i:int = 0; i < MAX_GENRE ; i++)
+				genreLoader[i] = new Loader();
+			genrePaths[0]="drama.png"; genrePaths[1]="action.png"; genrePaths[2]="romance.png"; genrePaths[3]="comedy.png"; 
+			genrePaths[4]="scifi.png"; genrePaths[5]="horror.png"; genrePaths[6]="thriller.png"; genrePaths[7]="misc.png"; 
+			
+			for(var i: int = 0; i < MAX_GENRE; i++)
+				_load_icons1(genreLoader[i],"Genre",genrePaths[i]);
+			_load_icons1(closeLoader, "close", "close.png");
+			_load_icons1(quesLoader, "question", "question.png");
+			_load_icons1(starLoader, "star", "star.png");
+			
 		}
 		public function redraw():void
 		{
 			var g:Graphics = graphics;
+			if(posterImage != null)posterh = posterImage.height;
 			g.clear();
 			g.beginFill(0,0);
-			g.drawRect(0,0,100,120);
+			g.drawRect(0,0,iconw+posterw+starw,posterh);
 			g.endFill();
 			if(rating > 0 && starImage != null)
 			{
 				for(var y:int = 0; y < rating; y++)
-					drawImage(g,starImage,120,y*20);
+					drawImage(g,starImage,iconw+posterw,y*starh);
 			}
-			drawImage(g,posterImage,10,0);
-			if(imageArray["action"]==1)drawImage(g,actionImage,0,0);
-			if(imageArray["drama"]==1)drawImage(g,dramaImage,0,20);
-			if(imageArray["romance"]==1)drawImage(g,romanceImage,0,40);
+			drawImage(g,posterImage,iconw,0); //draw poster
+			for(var i:int = 0 ; i < 10 ; i++)
+				if(imageArray[i] == 1)
+					drawImage(g,genreImage[i],0,iconh*i); //draw genres
 			g.endFill();
 			if(isHover==true)
 			{
-				drawImage(g,closeImage,0,100);
-				drawImage(g,quesImage,20,100);
+				drawImage(g,closeImage,iconw  ,posterh-iconh);
+				drawImage(g,quesImage ,iconw*2,posterh-iconh);
 			}
-/* 			if(quesSprite.parent == null)
-			{
-				drawImage(closeSprite.graphics,closeImage,0,0);
-				drawImage(quesSprite.graphics,quesImage,0,0);
-				addChild(closeSprite);
-				addChild(quesSprite);
-				closeSprite.y = quesSprite.y = 100; quesSprite.x = 20;
-				closeSprite.visible = quesSprite.visible = false;
-				closeSprite.addEventListener(MouseEvent.CLICK, onRemoveMovie);
-			}
- */		}
+		}
 		protected function onRemoveMovie(event:MouseEvent):void
 		{
-			if(event.localX >=0 && event.localX < 40 && event.localY > 100)
+			if(event.localX >=0 && event.localX < iconw && event.localY > posterh-iconh)
 			{
 				props.particle.die = true;
 				die = true;
+			}
+			else if(event.localX >=iconw && event.localX < 2*iconw && event.localY > posterh-iconh)
+			{
+				//INFO BOX
 			}
 		}
 		protected function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void
@@ -131,74 +131,35 @@ package flare.vis.data
 		}
 		protected static function itemLoaded(e:Event):void
 		{
-			if(loadedCount == 5)
+			if(loadedCount == 10)
 			{
-				starImage =createImagefromLoader(starLoader);
-				actionImage =createImagefromLoader(actionLoader);
-				dramaImage =createImagefromLoader(dramaLoader);
-				romanceImage =createImagefromLoader(romanceLoader);
+				for(var i:int = 0; i < MAX_GENRE; i++)
+					genreImage[i] = createImagefromLoader(genreLoader[i]);
 				closeImage =createImagefromLoader(closeLoader);
 				quesImage =createImagefromLoader(quesLoader);
-				
+				starImage =createImagefromLoader(starLoader);
 			}
 			loadedCount++;
 		}
 		
-		protected function removeAllChildsByName(s:String):void
-		{
-			var d:DisplayObject;
-			while ( (d=getChildByName(s)) != null)
-			{
-				removeChild(d);
-			}	
-		}
-		protected function _addChild(s:String, loader:Loader, X:int, Y:int):void
-		{
-			if(loader.width == 0)
-				imageArray[s] = 0;
-			else
-			{
-				var mySprite:Sprite = new Sprite();
-            	var myBitmap:BitmapData = new BitmapData(loader.width, loader.height, false);
-            	myBitmap.draw(loader, new Matrix());
-            
-            	imageArray[s] = 1;
-            	redraw();
-   			}
-            /*mySprite.name = s;
-            mySprite.x = X; mySprite.y = Y;
-            mySprite.graphics.beginBitmapFill(myBitmap, new Matrix, true);
-            mySprite.graphics.drawRect(0, 0, loader.width, loader.height);
-            mySprite.graphics.endFill();
-            
-            addChild(mySprite);*/
-
-		}
 		public function setRating(r:int):void
 		{
 			rating = r;
-			removeAllChildsByName("rating");
-			for(var i:int = 0; i < rating; i++)
-			{
-				_addChild("rating",starLoader,120,i*16);
-			}
 		}
-		public function addGenre(s:String):void
+		public function addGenre(i:int):void
 		{
-			if(s == "action")_addChild(s,actionLoader,0,0);
-			if(s == "drama")_addChild(s,dramaLoader,0,20);
-			if(s == "romance")_addChild(s,romanceLoader,0,40);
+			imageArray[i] = 1;
 		}
-		public function removeGenre(s:String):void
+		public function removeGenre(i:int):void
 		{
-			removeAllChildsByName(s);
+			imageArray[i] = 0;
 		}
 		public function setPoster(s:String):void
 		{
 			var urlRequest:URLRequest = new URLRequest(s);
 			posterLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, posterLoaded );
 			posterLoader.load( urlRequest );
-			posterLoader.x = 20;
+			posterLoader.x = iconw;
 			//addChild(posterLoader);setChildIndex(posterLoader, 0);
 		}
 		public function setTitle(s:String):void
