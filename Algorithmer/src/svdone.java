@@ -528,8 +528,6 @@ public class svdone {
 			
 			return this.id - anotherInfo.id;
 		}
-
-		
 	}
 	
 	public void sortDoubleRow(String inFile, String outFile){

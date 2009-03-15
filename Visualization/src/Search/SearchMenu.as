@@ -21,6 +21,8 @@ package Search
 		private var conn:ConnectionHandler;
 		private var results:Sprite;
 		private var resultArea:ScrollPane;
+		
+		
 			
 		public function SearchMenu(conn:ConnectionHandler)
 		{
