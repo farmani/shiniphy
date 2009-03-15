@@ -1,12 +1,13 @@
 package Database
 {
+	import Filter.FilterHandler;
+	
 	import __AS3__.vec.Vector;
 	
-	import flash.display.Sprite;
 	import flash.utils.Dictionary;
 	import flash.xml.XMLNode;
 	
-	public class SuggestionHandler extends Sprite
+	public class SuggestionHandler
 	{
 		
 		private var movies:Vector.<Movie>;
@@ -21,13 +22,13 @@ package Database
 		private var filterYearEnd:int = 3000;
 		private var filterPopularityMax:int = 10000000;
 		private var filterPopularityMin:int = 0;
-		
+		private var filters:FilterHandler;
 		
 		private var movieVis:MovieVis = null;
 		
-		public function SuggestionHandler(mv:MovieVis)
+		public function SuggestionHandler(mv:MovieVis, filters:FilterHandler)
 		{
-		
+			this.filters = filters;
 			movieVis = mv;
 			movies = new Vector.<Movie>(100);
 			
@@ -43,6 +44,8 @@ package Database
 		}
 		
 		public function newSimilarSet(xnode:XMLNode):void{
+
+			filters.reset();
 
 			movies.length = 0;
 
@@ -109,7 +112,7 @@ package Database
 			
 		}
 		
-		private function filterOnKeyword(id:int, filter:Boolean):void{
+		public function filterOnKeyword(id:int, filter:Boolean):void{
 			
 			
 			for each (var tmp:Keyword in keywords){
@@ -121,7 +124,7 @@ package Database
 			}        	
 		}
 		
-        private function filterOnGenre(id:int, filter:Boolean):void{
+        public function filterOnGenre(id:int, filter:Boolean):void{
         	
         	var tmp:Genre = genres[id];
 			
@@ -130,12 +133,12 @@ package Database
 				
 				tmp.filtered = filter;
 				updateFiltering();
-        		// update viz
+        		
 			}
         	
         	
         }
-        private function filterOnYear(start:int, end:int):void{
+        public function filterOnYear(start:int, end:int):void{
         	
         	filterYearStart = start;
         	filterYearEnd = end;
@@ -145,7 +148,7 @@ package Database
         	
         }
         
-        private function filterOnPopularity(min:int, max:int):void{
+        public function filterOnPopularity(min:int, max:int):void{
         	
         	filterPopularityMin = min;
         	filterPopularityMax = max;
@@ -196,6 +199,15 @@ package Database
 				}				
 			}
 			
+			
+			
 		}	
 	}
 }
+
+
+
+
+
+
+
