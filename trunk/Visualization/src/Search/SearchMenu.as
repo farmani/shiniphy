@@ -117,8 +117,17 @@ package Search
 		
 		public function mouseDown(evt:MouseEvent):void{
 			
-			if(searchBox.text.length > 1){
-				resultArea.visible = true;
+			if(searchBox.text.length < 2){
+				resultArea.visible = false;
+			}else{
+				
+				if(evt.localX > 250 || evt.localX < 0 || evt.localY < 0 || evt.localY > 20){
+					resultArea.visible = false;
+				}else{
+					resultArea.visible = true;
+				}
+				
+				
 			}
 			
 		}

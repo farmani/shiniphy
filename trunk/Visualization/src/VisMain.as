@@ -2,6 +2,8 @@ package {
 	import Database.ConnectionHandler;
 	import Database.SuggestionHandler;
 	
+	import MainInfo.InfoBox;
+	
 	import Search.SearchMenu;
 	
 	import flare.vis.data.MovieSprite;
@@ -9,6 +11,7 @@ package {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.events.MouseEvent;
 	import flash.system.Security;
 
 	[SWF(width="850", height="800", backgroundColor="#ffffff", frameRate="30")]
@@ -19,6 +22,7 @@ package {
 		private var dataHandler:SuggestionHandler;
 		private var searchMenu:SearchMenu;
 		private var movieVis:MovieVis;
+		private var infoBox:InfoBox;
 		
 		public function VisMain()
 		{
@@ -39,7 +43,11 @@ package {
 			Security.loadPolicyFile("xmlsocket://" + host + ":" + policyPort);
 			
 		    movieVis = new MovieVis();
+		    
 			dataHandler = new SuggestionHandler(movieVis );
+			dataHandler.x = 100;
+			dataHandler.y = 50;
+			
 			conn = new ConnectionHandler(host, chatPort, dataHandler);
 		
 			movieVis.init();
@@ -49,20 +57,29 @@ package {
 			conn.Connect();
 			
 			searchMenu = new SearchMenu(conn);
-			
-			dataHandler.x = 100;
-			dataHandler.y = 50;
-			
 			searchMenu.x = 125;
 			searchMenu.y = 20;
 			
+			infoBox = new InfoBox();
+			
 			
 			// make sure to add in right order so that search dropdown is on top
+			
 			this.addChild(movieVis);
+			this.addChild(infoBox);
 			this.addChild(dataHandler);
 			this.addChild(searchMenu);
 			// -------------------
 			//stage.addEventListener(Event.REMOVED,appClosed);
+			
+			stage.addEventListener(MouseEvent.CLICK, mouseClick);
+		}
+		
+		private function mouseClick(e:MouseEvent){
+			
+			
+			searchMenu.mouseDown(e);
+			
 		}		
 	}
 }
