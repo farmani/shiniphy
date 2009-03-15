@@ -3,12 +3,14 @@ package Database
 	public class Keyword
 	{
 		public var filtered:Boolean = false;
-		public var count:int = 0;
+		public var count:int = 1;
+		public var key:int = -1;
 		
 		
 		
-		public function Keyword()
+		public function Keyword(k:int)
 		{
+			key = k;
 		}
 
 	}
