@@ -5,6 +5,7 @@ package flare.vis.data
 	import fl.controls.Label;
 	
 	import flash.display.BitmapData;
+	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -54,14 +55,12 @@ package flare.vis.data
 			super();
 			addEventListener(MouseEvent.CLICK,onRemoveMovie);
 		}
-		
 		protected static function _load_icons1(l:Loader, s:String, file:String):void
 		{
 			l.name=s; 
 			l.contentLoaderInfo.addEventListener(Event.COMPLETE, itemLoaded);
 			l.load( new URLRequest(file));
 		}
-		
 		public static function load_icons():void
 		{
 			for(var i:int = 0; i < MAX_GENRE ; i++)
@@ -90,8 +89,8 @@ package flare.vis.data
 					drawImage(g,starImage,iconw+posterw,y*starh);
 			}
 			drawImage(g,posterImage,iconw,0); //draw poster
-			for(var i:int = 0 ; i < 10 ; i++)
-				if(imageArray[i] == 1)
+			for(var i:int = 0 ; i < MAX_GENRE ; i++)
+				//if(imageArray[i] == 1)
 					drawImage(g,genreImage[i],0,iconh*i); //draw genres
 			g.endFill();
 			if(isHover==true)
@@ -102,7 +101,7 @@ package flare.vis.data
 		}
 		protected function onRemoveMovie(event:MouseEvent):void
 		{
-			if(event.localX >=0 && event.localX < iconw && event.localY > posterh-iconh)
+			if(event.localX >=iconw && event.localX < iconw*2 && event.localY > posterh-iconh)
 			{
 				props.particle.die = true;
 				die = true;
@@ -127,8 +126,9 @@ package flare.vis.data
 		}
 		protected static function createImagefromLoader(l:Loader):BitmapData
 		{
-			var b:BitmapData= new BitmapData(l.width, l.height, false);
-            b.draw(l, new Matrix());
+			//var b:BitmapData= new BitmapData(l.width, l.height, true);
+            //b.draw(l, new Matrix());
+            var b:BitmapData = Bitmap(l.content).bitmapData;
             return b;
 		}
 		protected static function itemLoaded(e:Event):void
