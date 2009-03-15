@@ -103,25 +103,22 @@ package Database
 			}
 			
 			keywords.sortOn("count",Array.NUMERIC | Array.DESCENDING);
-			keywords.length = 20;
+			keywords.length = 10;
 			
 			movieVis.processData(movies);
 			
 		}
 		
-		private function filterOnKeyword(id:String, filter:Boolean):void{
-			
-			var tmp:Keyword = keywords[id];
+		private function filterOnKeyword(id:int, filter:Boolean):void{
 			
 			
-			if(tmp != null){
-				
-				tmp.filtered = filter;
-				updateFiltering();
-        		// update viz
-			}
-			
-        	
+			for each (var tmp:Keyword in keywords){
+				if(id == tmp.key){
+					tmp.filtered = filter;
+					updateFiltering();
+					return;
+				}
+			}        	
 		}
 		
         private function filterOnGenre(id:int, filter:Boolean):void{
@@ -161,6 +158,9 @@ package Database
 		
 		private function updateFiltering():void{
 			
+			var key:int;
+			var filterKey:Keyword;
+			var key2:int;
 			for each(var mov:Movie in movies){
 				if(mov.year > filterYearEnd || mov.year < filterYearStart){
 					
@@ -173,9 +173,23 @@ package Database
 				
 				}else if(mov.genres.length > 0) {
 					
+					for each (key in mov.genres){
+						if(genres[key].filtered)
+							mov.filtered = true;
+
+					}
+					
 					continue;
 				}else if(mov.keywords.length > 0) {
 					
+					for each (key in mov.keywords){
+						for each (filterKey in keywords){
+							if(filterKey.filtered && key == filterKey.key){
+								mov.filtered = true;
+								
+							}
+						}
+					}
 					continue;
 				}else{
 					mov.filtered = false;
