@@ -53,14 +53,14 @@ package Filter
 			
 			var egon2:Array = new Array("-1960","1960s","1970s","1980s","1990s", "2000s");
 			
-			yearFilter.setUp(years, egon2, 0.7, 1950, 2000, 1950, true, 2000);
+			yearFilter.setUp(years, egon2, 0.7, 1950, 2000, 1950, true, false, 2000);
 		}
 		
 		public function setRatings(ratings:Array):void{
 			
 			var egon2:Array = new Array("1 Star", "2 Star", "3 Star", "4 Star","5 Star");
 			
-			ratingFilter.setUp(ratings, egon2, .7, 1, 5, 1, false);
+			ratingFilter.setUp(ratings, egon2, .7, 1, 5, 1, false, false);
 			
 		}
 		
@@ -69,7 +69,7 @@ package Filter
 			
 			var egon2:Array = new Array("Drama", "Action", "Romance", "Comedy","Sci-Fi", "Horror", "Thriller", "Misc");
 			
-			genreFilter.setUp(genres, egon2, .7, 1, 5, 1, false);
+			genreFilter.setUp(genres, egon2, .7, 1, 5, 1, false, true);
 			genreFilter.yearSlider.visible = false;
 			
 			genreSlider.visible = true;
