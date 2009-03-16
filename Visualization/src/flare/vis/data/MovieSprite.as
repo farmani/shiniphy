@@ -58,6 +58,7 @@ package flare.vis.data
 	
 		private static var movieRenderer:MovieRenderer = new MovieRenderer();
 		public var movie:Movie = null;	
+		private var bShowGrayTextArea:Boolean =true;
 		public function MovieSprite(mv:Movie=null, movieRenderer: MovieRenderer=null)
 		{
 			if(mv != null)
@@ -169,7 +170,7 @@ package flare.vis.data
 			drawImage(g,posterImage,iconw,0); //draw poster
 			//Draw a gray rectangle for better readability
 			g.beginFill(0x7f7f7f,0.72);
-			if(label != null)
+			if(label != null && bShowGrayTextArea==true)
 			g.drawRect(iconw,posterh-label.height,posterw,label.height);
 			g.endFill();
 			for(var i:int = 0 ; i < MAX_GENRE ; i++)
@@ -195,9 +196,9 @@ package flare.vis.data
 			else //if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
 			{
 				var s:Sprite = new Sprite();
-				var _ishover:Boolean = isHover; isHover = false;
+				var _ishover:Boolean = isHover; isHover = false;bShowGrayTextArea=false;
 				redraw(s.graphics);
-				isHover = _ishover;
+				isHover = _ishover;bShowGrayTextArea=true;
 				infoBox.setBackgroundImage(s);
 				infoBox.visible = true;
 				infoBox.setMovie(movie);
