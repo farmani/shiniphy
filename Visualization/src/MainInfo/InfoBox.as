@@ -58,16 +58,7 @@ package MainInfo
 			//info.border = true;
 			whyBox.wordWrap = true;
 			
-			whyBox.text = "asssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss" + 
-					"ss";
+			
 			
 			addChild(whyBox);
 			
@@ -85,7 +76,24 @@ package MainInfo
       	public function setMovie(mov:Movie):void{
       		movie = mov;
       		
+      		if(mov.score < 10000){
+      		
+      		whyBox.text = "Why this movie? We base it on the following:\n" + 
+					+ Math.round(100*mov.similarRatingScore) + "% Others ratings\n" + 
+					+ Math.round(100*mov.directorScore) + "% Director\n" + 
+					+ Math.round(100*mov.genreScore) + "% Genre\n" + 
+					+ Math.round(100*mov.keywordScore) + "% Keywords\n" + 
+					+ Math.round(100*mov.yearScore) + "% Year\n";
+					
+      		}else{
+      			whyBox.text = "";
+      		}
+      		
       		if(mov.id > 1){
+      			
+      			info.text = mov.movieName + "\nScore on netflix: " + mov.netFlixRating + "\nUsers who have seen it: " + mov.support + "\n\n";
+      			
+      			
 	      		var url:String = "../../htmlinfos/info(" + (mov.id - 1) +")";
 				var loadit:URLLoader = new URLLoader();
 				loadit.addEventListener(Event.COMPLETE, completeHandler);
@@ -98,7 +106,9 @@ package MainInfo
       	}
       	
       	private function completeHandler(event:Event):void {
-			info.htmlText = event.target.data as String;	
+			var text:String = event.target.data as String;
+			
+			info.appendText(text.substring(text.indexOf("<p>") + 3, text.indexOf("</p>")));
 		}
       	
       	public function setBackgroundImage(s:Sprite):void

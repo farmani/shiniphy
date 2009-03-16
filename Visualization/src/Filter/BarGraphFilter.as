@@ -3,6 +3,8 @@ package Filter
 	import fl.controls.Slider;
 	import fl.events.SliderEvent;
 	
+	import flare.vis.data.MovieSprite;
+	
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -102,7 +104,7 @@ package Filter
 			
 		}
 
-		public function setUp(values:Array, labels:Array, barWidth:Number, min:int, max:int, slider1Val:int, doubleSlider:Boolean, slider2Val:int = 0):void{
+		public function setUp(values:Array, labels:Array, barWidth:Number, min:int, max:int, slider1Val:int, doubleSlider:Boolean, usingImages:Boolean, slider2Val:int = 0):void{
 			
 			if(values.length != labels.length){
 				trace("Array lengths missmatch error");
@@ -192,6 +194,8 @@ package Filter
             i = 0;
             graphics.lineStyle(0, 0xCCCCCC, 0);
             
+            
+            
             var xLabel:TextField;
             // Draw bars ! 
             for each(val in values){
@@ -206,15 +210,19 @@ package Filter
 					graphics.drawRect(i*stepSize+offSet*barWidth, mainHeight - 1, stepSize*barWidth, mainHeight*(-val/topVal));
 					graphics.endFill();
             	}
-            	xLabel = new TextField();
-            	xLabel.text = labels[i];
-            	xLabel.defaultTextFormat = fontx;
-            	xLabel.x = i*stepSize+offSet*barWidth;
-            	xLabel.y = mainHeight*(1-val/topVal) - 20;
-            	xLabel.height = 20;
-            	xLabel.selectable = false;
-            	this.addChild(xLabel);
-            	xTexts.push(xLabel);
+            	if(!usingImages){
+	            	xLabel = new TextField();
+	            	xLabel.text = labels[i];
+	            	xLabel.defaultTextFormat = fontx;
+	            	xLabel.x = i*stepSize+offSet*barWidth;
+	            	xLabel.y = mainHeight*(1-val/topVal) - 20;
+	            	xLabel.height = 20;
+	            	xLabel.selectable = false;
+	            	this.addChild(xLabel);
+	            	xTexts.push(xLabel);
+            	}else{
+            		MovieSprite.drawImage(graphics,MovieSprite.genreImage[i],i*stepSize+offSet*barWidth + 4,mainHeight*(1-val/topVal) - 20);
+            	}
             	
 				++i;
             	

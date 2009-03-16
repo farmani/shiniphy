@@ -191,7 +191,7 @@ package flare.vis.data
 				infoBox.setMovie(movie);
 			}
 		}
-		protected function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void
+		public static function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void
 		{
 			if(b != null)
 			{
