@@ -200,11 +200,16 @@ package Database
 		
 		private function updateFiltering():void{
 			
+			var lowYear:int = filterYearStart - 1;
+			if(filterYearStart == 1950){
+				lowYear = 0;
+			}
+			
 			var key:int;
 			var filterKey:Keyword;
 			var key2:int;
 			for each(var mov:Movie in movies){
-				if(mov.year > filterYearEnd || mov.year < filterYearStart-1){
+				if(mov.year > filterYearEnd + 9 || mov.year < lowYear-1){
 					
 					mov.filtered = true;
 					continue;
