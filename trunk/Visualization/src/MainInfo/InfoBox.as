@@ -23,7 +23,8 @@ package MainInfo
 		
 		public function InfoBox()
 		{
-			
+			this.x = 600;
+			this.y = 400;
 			movie = null;
 			
 			//this.visible = false;
