@@ -216,6 +216,7 @@ package Database
 						if(genres[MovieVis.mapGenre(key)].filtered)
 							mov.filtered = true;
 
+
 					}
 					
 					continue;
