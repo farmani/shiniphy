@@ -96,8 +96,8 @@ package Filter
 		
 		public function reset():void{
 			
-			yearSlider.value = 1880;
-			yearSlider2.value = 2005;
+			yearSlider.value = min;
+			yearSlider2.value = max;
 			
 			
 		}

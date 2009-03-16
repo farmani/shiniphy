@@ -50,6 +50,8 @@ package Database
 			this.conn = conn;
 			
 			filters.reset();
+			
+			movies.length = 0;
 
 			var val:String;
 			var key:int;
@@ -164,7 +166,7 @@ package Database
         	
         }
         
-        public function fuzzyFilterGenre(boost:Number):void{
+        public function filterOnGenreFuzzy(boost:Number):void{
         	
 			if(conn != null){
 				conn.genreBoost = boost;
@@ -199,11 +201,11 @@ package Database
 			var filterKey:Keyword;
 			var key2:int;
 			for each(var mov:Movie in movies){
-				if(mov.year > filterYearEnd || mov.year < filterYearStart){
+				if(mov.year > filterYearEnd || mov.year < filterYearStart-1){
 					
 					mov.filtered = true;
 					continue;
-				}else if(mov.support > filterPopularityMax || mov.support < filterPopularityMin){
+				}else if(mov.support < filterPopularityMin-1){
 					
 					mov.filtered = true;
 					continue;
@@ -233,7 +235,7 @@ package Database
 				}				
 			}
 			
-			movieVis.init();
+			movieVis.processData(movies);
 			
 		}	
 	}
