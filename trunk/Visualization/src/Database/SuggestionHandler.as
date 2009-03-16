@@ -213,8 +213,8 @@ package Database
 				}else if(mov.genres.length > 0) {
 					
 					for each (key in mov.genres){
-						if(genres[MovieVis.mapGenre(key)].filtered)
-							mov.filtered = true;
+
+						mov.filtered = genresFiltered[MovieVis.mapGenre(key)];
 
 
 					}
