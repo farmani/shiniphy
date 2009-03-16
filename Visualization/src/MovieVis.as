@@ -115,15 +115,15 @@ package
 		private function createGenreTextField(id:int, angle:Number):TextField
 		{
 			var t:TextField = new TextField();
-			t.x = cx+1.1*rad*Math.cos(Math.PI/180*angle)-25;
-			t.y = cy+1.1*rad*Math.sin(Math.PI/180*angle);
+			t.x = cx+1.3*rad*Math.cos(Math.PI/180*angle)-25;
+			t.y = cy+1.3*rad*Math.sin(Math.PI/180*angle);
 			t.text = mapGenreIdToName(id);
 			t.selectable = false;
 			t.mouseEnabled = false;
 			t.autoSize = "center";
 			t.background = false;
 			var tf1:TextFormat = new TextFormat();
-			tf1.font = "Calibri"; tf1.size = 24;
+			tf1.font = "Calibri"; tf1.size = 26;
 			tf1.align="center";
 			tf1.bold = true
 			t.setTextFormat(tf1);
@@ -192,7 +192,7 @@ package
 			var genrelayout:Vector.<sGenreLayout> = new Vector.<sGenreLayout>(numGenre);
 			for(i = 0; i < numGenre; i++)genrelayout[i] = new sGenreLayout();
 			var startpos:int = numGenre/2-0.5;
-			genrelayout[startpos].angle = -120; 
+			genrelayout[startpos].angle = -135; 
 			genrelayout[startpos].range = 360*(1.0*(genreArray[0] as Keyword).count/tot_count )/2; 
 			genrelayout[startpos].id = (genreArray[0] as Keyword).key;
 			GenreLabels.addChild(createGenreTextField(genrelayout[startpos].id, genrelayout[startpos].angle));  

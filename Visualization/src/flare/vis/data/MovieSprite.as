@@ -6,11 +6,8 @@ package flare.vis.data
 	
 	import __AS3__.vec.Vector;
 	
-	import fl.controls.Label;
-	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.BlendMode;
 	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -18,15 +15,16 @@ package flare.vis.data
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
+	import flash.text.TextField;
 	import flash.text.TextFormat;
-
+	
 	public class MovieSprite extends NodeSprite
 	{
 		public var angle2: Number;
 		public var radial_distance: Number;
 		public var die:Boolean = false;
 		
-		protected var label:Label;
+		protected var label:TextField;
 		protected var posterLoader:Loader = new Loader();
 		public var rating: int = 0;
 		protected var lastGenreHt:int = 0;
@@ -161,8 +159,9 @@ package flare.vis.data
 			}
 			drawImage(g,posterImage,iconw,0); //draw poster
 			//Draw a gray rectangle for better readability
-			g.beginFill(0x7f7f7f,0.5);
-			g.drawRect(iconw,posterh-15,posterw,15);
+			g.beginFill(0x7f7f7f,0.72);
+			if(label != null)
+			g.drawRect(iconw,posterh-label.height,posterw,label.height);
 			g.endFill();
 			for(var i:int = 0 ; i < MAX_GENRE ; i++)
 				if(imageArray[i] == 1)
@@ -246,23 +245,36 @@ package flare.vis.data
 		}
 		public function setTitle(s:String):void
 		{
+			//s="Miss Congeniality";
+			var leading:Number = 2;
+			var tf1:TextFormat = new TextFormat();
+			tf1.font = "Arial"; tf1.size = 12;
+			tf1.color = 0xffffffff;
+			tf1.leading = leading;
+			var d:TextField = new TextField();
+			d.autoSize = "left";
+			d.text = s;
+			d.defaultTextFormat = tf1;
+			d.setTextFormat(tf1);
+			
 			if(label == null)
 			{
-				label= new Label();
-				label.blendMode = BlendMode.INVERT;
+				label= new TextField();
+				//label.blendMode = BlendMode.INVERT;
 				//label.autoSize = TextFieldAutoSize.CENTER;
-				label.width = 100;     
-				label.height = 15;     
-				label.x = iconw;     
-				label.y = posterh - 15;     
-				var tf1:TextFormat = new TextFormat();
-				tf1.font = "Arial"; tf1.size = 12;
 				//tf1.bold="true";
-				//label.wordWrap = true;
-				label.setStyle("textFormat", tf1);
+				label.wordWrap = true;
+				label.multiline=true;
+				label.defaultTextFormat = tf1;
 				addChild(label); 
 			}
+			label.width = posterw; 
+			var lines:int = (d.textWidth+posterw-1) /posterw;    
+			label.height = d.textHeight * (lines) + (lines-1)*leading ;     
+			label.x = iconw;     
+			label.y = posterh - label.height ;     
 			label.text = s;
+
 		}
 		private function posterLoaded (e:Event):void{
 		if(label)label.y = posterLoader.height - label.height; //setChildIndex(label, numChildren - 1);
