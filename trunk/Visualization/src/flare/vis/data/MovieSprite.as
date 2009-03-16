@@ -20,6 +20,8 @@ package flare.vis.data
 	
 	public class MovieSprite extends NodeSprite
 	{
+		protected var lastx:int = -1;
+		protected var lasty:int = -1;
 		public var angle2: Number;
 		public var radial_distance: Number;
 		public var die:Boolean = false;
@@ -73,7 +75,14 @@ package flare.vis.data
 			radial_distance = 0;
 			angle2 = 0;
 			super();
-			addEventListener(MouseEvent.CLICK,onRemoveMovie);
+			//addEventListener(MouseEvent.CLICK,onRemoveMovie);
+			addEventListener(MouseEvent.MOUSE_DOWN,onMouseDown);
+			addEventListener(MouseEvent.MOUSE_UP,onRemoveMovie);
+		}
+		protected function onMouseDown(event:MouseEvent):void
+		{
+			lastx = event.stageX;
+			lasty = event.stageY;
 		}
 		public function hasGenre(id:int):int 
 		{
@@ -174,6 +183,10 @@ package flare.vis.data
 		}
 		protected function onRemoveMovie(event:MouseEvent):void
 		{
+			if(lastx != -1 && (lastx != (int)(event.stageX)) || lasty != (int)(event.stageY))//was draggin
+			{
+				return;
+			}
 			if(event.localX >=posterw && event.localX < posterw+iconw && event.localY < iconh && IsMainMovie == false)
 			{
 				props.particle.die = true;
@@ -245,7 +258,7 @@ package flare.vis.data
 		}
 		public function setTitle(s:String):void
 		{
-			//s="Miss Congeniality";
+			//s="The Terminator";
 			var leading:Number = 2;
 			var tf1:TextFormat = new TextFormat();
 			tf1.font = "Arial"; tf1.size = 12;
@@ -269,7 +282,7 @@ package flare.vis.data
 				addChild(label); 
 			}
 			label.width = posterw; 
-			var lines:int = (d.textWidth+posterw-1) /posterw;    
+			var lines:int = (d.textWidth+5+posterw-1) /posterw;    
 			label.height = d.textHeight * (lines) + (lines-1)*leading ;     
 			label.x = iconw;     
 			label.y = posterh - label.height ;     
