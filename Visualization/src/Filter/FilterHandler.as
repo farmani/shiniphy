@@ -8,14 +8,14 @@ package Filter
 	{
 		
 		private var dataHandler:SuggestionHandler;
-		private var yearFilter:BarGraphFilter, ratingFilter:BarGraphFilter;
+		private var yearFilter:BarGraphFilter, ratingFilter:BarGraphFilter, genreFilter:BarGraphFilter;
 		
 		public function FilterHandler()
 		{
 			this.dataHandler = null;
 			
 			yearFilter = new BarGraphFilter(this, 250,80);
-			
+			genreFilter = new BarGraphFilter(this,250,80);
 			ratingFilter = new BarGraphFilter(this,250,80);
 			
 			
@@ -25,8 +25,12 @@ package Filter
 			ratingFilter.x = 1000;
 			ratingFilter.y = 250;
 			
+			genreFilter.x = 1000;
+			genreFilter.y = 400;
+			
 			addChild(yearFilter);
 			addChild(ratingFilter);
+			addChild(genreFilter);
 		}
 		
 		public function setYears(years:Array):void{
@@ -42,6 +46,15 @@ package Filter
 			
 			ratingFilter.setUp(ratings, egon2, .7, 1, 5, 1, false);
 			
+		}
+		
+		public function setGenres(genres:Array):void{
+			
+			
+			var egon2:Array = new Array("Drama", "Action", "Romance", "Comedy","Sci-Fi", "Horror", "Thriller", "Misc");
+			
+			genreFilter.setUp(genres, egon2, .7, 1, 5, 1, false);
+			genreFilter.yearSlider.visible = false;
 		}
 		
 		public function init(dataHandler:SuggestionHandler):void{
