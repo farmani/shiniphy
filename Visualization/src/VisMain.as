@@ -67,22 +67,11 @@ package {
 			searchMenu.y = 20;
 			
 			
-/* 88,184,214
-144,194,210
-218,226,228 */
-
-			//Draw the circles
-			var circles:Sprite = new Sprite();
-			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*1/3.2,MovieVis.rgb2hex(88,184,214));
-			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*2/3.2,MovieVis.rgb2hex(144,194,210));
-			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*3/3.2,MovieVis.rgb2hex(218,226,228));
-			
 
 
 			
 			// make sure to add in right order so that search dropdown is on top
 			
-			this.addChild(circles);
 			this.addChild(movieVis);
 			this.addChild(filterHandler);
 			this.addChild(infoBox);

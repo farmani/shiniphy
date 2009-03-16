@@ -48,9 +48,9 @@ package flare.vis.data
 		public var quesSprite:Sprite = new Sprite();
 		public var closeSprite:Sprite = new Sprite();
 		
-		public var posterw:int = 110, posterh:int = 150;
-		public var iconw:int =16, iconh:int = 16;
-		public var starw:int = 20, starh:int = 20;
+		public static var posterw:int = 110, posterh:int = 150;
+		public static var iconw:int =16, iconh:int = 16;
+		public static var starw:int = 20, starh:int = 20;
 			
 		public function MovieSprite()
 		{
@@ -115,10 +115,10 @@ package flare.vis.data
 			else if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
 			{
 				var s:Sprite = new Sprite();
-				redraw(s.graphics);
 				var _ishover:Boolean = isHover; isHover = false;
-				infoBox.setBackgroundImage(s);
+				redraw(s.graphics);
 				isHover = _ishover;
+				infoBox.setBackgroundImage(s);
 				infoBox.visible = true;
 				
 				

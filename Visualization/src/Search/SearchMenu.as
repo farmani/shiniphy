@@ -8,6 +8,7 @@ package Search
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.text.TextFieldType;
 	import flash.xml.XMLNode;
 
@@ -31,10 +32,30 @@ package Search
 			results = new Sprite();
 			resultArea = new ScrollPane();
 			
-			resultArea.width = 250;
+			//  search
+			searchBox = new TextField();
+			searchBox.height = 29;
+			searchBox.width = 330;
+			searchBox.x=searchBox.y=1; 
+			searchBox.background = false;
+			searchBox.type = TextFieldType.INPUT;
+			searchBox.border = false;
+			searchBox.addEventListener(KeyboardEvent.KEY_DOWN, updateSearch);
+			var tf:TextFormat = new TextFormat();
+			tf.font = "Calibri"; tf.size = 20;
+			searchBox.defaultTextFormat = tf;
+
+			//Draw the textbox
+			var circles:Sprite = new Sprite();
+			circles.graphics.lineStyle(1,MovieVis.rgb2hex(88,184,214));
+			circles.graphics.beginFill(0,0);
+			circles.graphics.drawRoundRect(searchBox.x-1,searchBox.y-1,searchBox.width+1,searchBox.height+1,10,10);
+			circles.graphics.endFill();
+			
+			resultArea.width = searchBox.width+1;
 			resultArea.height = 120;
-			resultArea.y = 21;
-			resultArea.x = 1;
+			resultArea.y = searchBox.height+searchBox.y+1;
+			resultArea.x = searchBox.x;
 			//resultArea.horizontalScrollBar.visible = false;
 			resultArea.visible = false;
 			resultArea.source = results;
@@ -42,15 +63,7 @@ package Search
 			resultArea.verticalScrollPolicy = "auto";
 			
 			
-			//  search
-			searchBox = new TextField();
-			searchBox.height = 20;
-			searchBox.width = 250;
-			searchBox.background = true;
-			searchBox.type = TextFieldType.INPUT;
-			searchBox.border = true;
-			searchBox.addEventListener(KeyboardEvent.KEY_DOWN, updateSearch);
-			
+			this.addChild(circles);
 			this.addChild(searchBox);
 			this.addChild(resultArea);
 			
@@ -122,7 +135,7 @@ package Search
 				resultArea.visible = false;
 			}else{
 				
-				if(evt.stageX < 250 + this.x && evt.stageX > this.x && evt.stageY > this.y && evt.stageY < 20 + this.y){
+				if(evt.stageX < searchBox.width + this.x && evt.stageX > this.x && evt.stageY > this.y && evt.stageY < searchBox.height+ this.y){
 					resultArea.visible = true;
 				}else{
 					resultArea.visible = false;
