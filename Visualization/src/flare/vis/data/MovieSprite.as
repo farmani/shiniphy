@@ -159,23 +159,23 @@ package flare.vis.data
 			}
 			drawImage(g,posterImage,iconw,0); //draw poster
 			for(var i:int = 0 ; i < MAX_GENRE ; i++)
-				//if(imageArray[i] == 1)
+				if(imageArray[i] == 1)
 					drawImage(g,genreImage[i],0,iconh*i); //draw genres
 			g.endFill();
 			if(isHover==true)
 			{
-				drawImage(g,closeImage,iconw  ,posterh-iconh);
-				drawImage(g,quesImage ,iconw*2,posterh-iconh);
+				drawImage(g,closeImage,posterw,0);
+				//drawImage(g,quesImage ,iconw*2,posterh-iconh);
 			}
 		}
 		protected function onRemoveMovie(event:MouseEvent):void
 		{
-			if(event.localX >=iconw && event.localX < iconw*2 && event.localY > posterh-iconh)
+			if(event.localX >=posterw && event.localX < posterw+iconw && event.localY < iconh)
 			{
 				props.particle.die = true;
 				die = true;
 			}
-			else if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
+			else //if(event.localX >=iconw*2 && event.localX < 3*iconw && event.localY > posterh-iconh)
 			{
 				var s:Sprite = new Sprite();
 				var _ishover:Boolean = isHover; isHover = false;

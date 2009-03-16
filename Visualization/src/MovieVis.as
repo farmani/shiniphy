@@ -18,11 +18,13 @@ package
 	import flare.vis.events.SelectionEvent;
 	import flare.vis.operator.encoder.PropertyEncoder;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
-	import Database.Movie;
-		
+	
+	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	import Database.Movie;
 	public class MovieVis extends Sprite
 	{
 	//import Database.Movie;
@@ -35,7 +37,7 @@ package
 		public static  var cx:Number = 400;
 		public static  var cy:Number = 400;
 		private var data:Data = new Data();
-		
+		private var GenreLabels:Sprite = null;
 		public function MovieVis(ibox:InfoBox)
 		{
 			MovieSprite.infoBox = ibox;
@@ -81,6 +83,13 @@ package
 	        g.endFill();
 		}
 
+		public static function mapGenreIdToName(g:int):String
+		{
+			if(g==0)return "Drama"; if(g==1)return "Action"; if(g==2)return "Romance"; if(g==3)return "Comedy";
+			if(g==4)return "Sci-Fi"; if(g==5)return "Horror"; if(g==6)return "Thriller"; if(g==7)return "Misc";
+			return " ";
+			//return MovieSprite.genrePaths[g];
+		}
 		public static function mapGenre(g:int):int
 		{
 			switch(g)
@@ -102,8 +111,30 @@ package
 			if(a < -180)return a+360;
 			return a;
 		}
+	
+		private function createGenreTextField(id:int, angle:Number):TextField
+		{
+			var t:TextField = new TextField();
+			t.x = cx+1.1*rad*Math.cos(Math.PI/180*angle)-25;
+			t.y = cy+1.1*rad*Math.sin(Math.PI/180*angle);
+			t.text = mapGenreIdToName(id);
+			t.selectable = false;
+			t.mouseEnabled = false;
+			t.autoSize = "center";
+			t.background = false;
+			var tf1:TextFormat = new TextFormat();
+			tf1.font = "Calibri"; tf1.size = 24;
+			tf1.align="center";
+			tf1.bold = true
+			t.setTextFormat(tf1);
+			t.defaultTextFormat = tf1;
+			return t;
+		}
 		public function processData(mvs:Vector.<Movie>):void
 		{
+			if(GenreLabels != null)
+				removeChild(GenreLabels);
+			GenreLabels = new Sprite();
 			data.nodes.clear();
 			
 			var i:int, j:int;
@@ -151,14 +182,17 @@ package
 			for(i = 0; i < 4; i++)
 				if((genreArray[0] as Keyword).count > 2.5*(genreArray[i] as Keyword).count)//Should be less than this
 					break;
-				else tot_count += (genreArray[i] as Keyword).count ; 
+				else{
+					tot_count += (genreArray[i] as Keyword).count ;
+				} 
 			var numGenre:int = i;
 			var genrelayout:Vector.<sGenreLayout> = new Vector.<sGenreLayout>(numGenre);
 			for(i = 0; i < numGenre; i++)genrelayout[i] = new sGenreLayout();
 			var startpos:int = numGenre/2-0.5;
-			genrelayout[startpos].angle = 120; 
+			genrelayout[startpos].angle = -120; 
 			genrelayout[startpos].range = 360*(1.0*(genreArray[0] as Keyword).count/tot_count )/2; 
 			genrelayout[startpos].id = (genreArray[0] as Keyword).key;
+			GenreLabels.addChild(createGenreTextField(genrelayout[startpos].id, genrelayout[startpos].angle));  
 			
 			var left:int = startpos - 1;
 			var right:int = startpos + 1;
@@ -168,14 +202,16 @@ package
 				genrelayout[right].id = (genreArray[i] as Keyword).key;
 				genrelayout[right].range = 360*(1.0*(genreArray[i] as Keyword).count/tot_count )/2;
 				genrelayout[right].angle = clampangle(genrelayout[right-1].angle + genrelayout[right-1].range + genrelayout[right].range);
+				GenreLabels.addChild(createGenreTextField(genrelayout[right].id, genrelayout[right].angle));  
 				right++;
 				i++;
 				if(i == numGenre ) break;
 				
 				genrelayout[left].id = (genreArray[i] as Keyword).key;
 				genrelayout[left].range = 360*(1.0*(genreArray[i] as Keyword).count/tot_count )/2;
-				genrelayout[left].angle = clampangle(genrelayout[left+1].angle -(genrelayout[left+1].range + genrelayout[left].range)); 
-				left--;
+				genrelayout[left].angle = clampangle(genrelayout[left+1].angle -(genrelayout[left+1].range + genrelayout[left].range));
+				GenreLabels.addChild(createGenreTextField(genrelayout[left].id, genrelayout[left].angle));  
+ 				left--;
 				i++;
 			}
 						
@@ -285,6 +321,7 @@ package
 					
 				n.x=cx-offy+n.radial_distance*Math.cos(n.angle2*Math.PI/180);
 				n.y=cy-offy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
+				addChild(GenreLabels);
 				//n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
 			}
 		}
