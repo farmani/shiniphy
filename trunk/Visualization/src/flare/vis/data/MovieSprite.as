@@ -1,5 +1,7 @@
 package flare.vis.data
 {
+	import Database.Movie;
+	
 	import MainInfo.InfoBox;
 	
 	import __AS3__.vec.Vector;
@@ -16,8 +18,7 @@ package flare.vis.data
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
-	import flash.text.TextFieldAutoSize;
-
+	
 	public class MovieSprite extends NodeSprite
 	{
 		public var angle2: Number;
@@ -49,17 +50,77 @@ package flare.vis.data
 		public var quesSprite:Sprite = new Sprite();
 		public var closeSprite:Sprite = new Sprite();
 		
-		public static var posterw:int = 110, posterh:int = 150;
+		public static var posterw:int = 88, posterh:int = 123;
 		public static var iconw:int =16, iconh:int = 16;
-		public static var starw:int = 20, starh:int = 20;
-			
-		public function MovieSprite()
+		public static var starw:int = 16, starh:int = 16;
+	
+		private static var movieRenderer:MovieRenderer = new MovieRenderer();
+		public var movie:Movie = null;	
+		public function MovieSprite(mv:Movie=null, movieRenderer: MovieRenderer=null)
 		{
+			if(mv != null)
+			{
+				movie = mv;
+				//rating = (movie.netFlixRating+1)/2;
+				rating = movie.netFlixRating;
+				setTitle(movie.movieName);
+				var movieId:int = movie.id-1;
+				setPoster("../../flix_images/"+movieId.toString()+".jpg");
+				//Add the genres
+				for(var j:int = 0; j < movie.genres.length; j++)
+					addGenre(MovieVis.mapGenre(movie.genres[j]));
+			}
 			radial_distance = 0;
 			angle2 = 0;
 			super();
 			addEventListener(MouseEvent.CLICK,onRemoveMovie);
 		}
+		public function hasGenre(id:int):int 
+		{
+			for(var j:int = 0; j < movie.genres.length; j++)
+				if( id == MovieVis.mapGenre(movie.genres[j]))
+					return id;
+			return -1;
+		}
+		public function selectGenre(genres:Vector.<sGenreLayout>):sGenreLayout
+		{
+			//Find the first common genre
+			var bGenreMatchFound:sGenreLayout = new sGenreLayout();
+			bGenreMatchFound.id = -1;
+			for(var i:int = 0; i < genres.length; i++)
+			{
+				bGenreMatchFound.id  = hasGenre(genres[i].id);
+				if(bGenreMatchFound.id != -1) break;
+			}
+			if(bGenreMatchFound.id == -1)
+			{
+			trace ("no match found for: "+movie.movieName);return bGenreMatchFound;}
+			
+			//See if has a common genre on left or right. Give equal probablity
+			var right:int, left:int;
+			if(Math.random() > 0.5)
+			{
+				right = i >= genres.length-1? 0: i+1;
+				left  = i <= 0? genres.length-1:i-1;
+			}
+			else
+			{
+				left  = i >= genres.length-1? 0: i+1;
+				right = i <= 0? genres.length-1:i-1;
+			}
+			var other:int = right;
+			var dummy:int = hasGenre(genres[right].id);
+			if(dummy == -1){other = hasGenre(genres[left].id);other = left;}
+			if(dummy == -1){bGenreMatchFound.angle = genres[i].angle; bGenreMatchFound.range = genres[i].range; return bGenreMatchFound;}
+			
+			bGenreMatchFound.range = (genres[i].range + genres[other].range)/2;
+			bGenreMatchFound.angle = (genres[i].angle + genres[other].angle)/2;
+			if(Math.abs(genres[i].angle - genres[other].angle) > 180)
+				bGenreMatchFound.angle += bGenreMatchFound.angle > 0? -180:180;
+	
+			return bGenreMatchFound;
+		}
+		
 		protected static function _load_icons1(l:Loader, s:String, file:String):void
 		{
 			l.name=s; 
@@ -84,6 +145,7 @@ package flare.vis.data
 		}
 		public function redraw(gin:Graphics = null):void
 		{
+			renderer = movieRenderer; 
 			var g:Graphics = gin==null?graphics:gin;
 			if(posterImage != null)posterh = posterImage.height;
 			g.clear();
@@ -121,9 +183,7 @@ package flare.vis.data
 				isHover = _ishover;
 				infoBox.setBackgroundImage(s);
 				infoBox.visible = true;
-				
-				
-				//infoBox.setMovie(mov);
+				infoBox.setMovie(movie);
 			}
 		}
 		protected function drawImage(g:Graphics, b:BitmapData, x:int, y:int, wd:int=-1, ht:int=-1):void
@@ -184,12 +244,12 @@ package flare.vis.data
 			if(label == null)
 			{
 				label= new Label();
-				label.blendMode = BlendMode.OVERLAY;
+				label.blendMode = BlendMode.INVERT;
 				//label.autoSize = TextFieldAutoSize.CENTER;
 				label.width = 100;     
 				label.height = 15;     
-				label.x = 0;     
-				label.y = posterh - label.height;     
+				label.x = iconw;     
+				label.y = posterh - 15;     
 				addChild(label); 
 			}
 			label.text = s;

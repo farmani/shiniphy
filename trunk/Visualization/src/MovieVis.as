@@ -3,10 +3,9 @@ package
 	import Database.Keyword;
 	
 	import MainInfo.InfoBox;
-	import Database.Movie;
+	
 	import __AS3__.vec.Vector;
-	import Database.Movie;
-		
+	
 	import flare.HoverControl2;
 	import flare.util.Shapes;
 	import flare.vis.Visualization;
@@ -19,7 +18,8 @@ package
 	import flare.vis.events.SelectionEvent;
 	import flare.vis.operator.encoder.PropertyEncoder;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
-	
+	import Database.Movie;
+		
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -96,7 +96,12 @@ package
 			}
 			return 0;
 		}
-		
+		public static function clampangle(a:Number):Number
+		{
+			if(a > 180)return a-360;
+			if(a < -180)return a+360;
+			return a;
+		}
 		public function processData(mvs:Vector.<Movie>):void
 		{
 			data.nodes.clear();
@@ -104,6 +109,15 @@ package
 			var i:int, j:int;
 			var offx:int = (MovieSprite.iconw+MovieSprite.posterw+MovieSprite.starw)/2;
 			var offy:int = (MovieSprite.posterh)/2;
+
+/* 			var minsup:Number = 1e7;
+			var maxsup:Number = -1;
+			for(i = 1; i < mvs.length; i++)
+			{
+				if(minsup > mvs[i].netFlixRating)minsup = mvs[i].netFlixRating;
+				if(maxsup < mvs[i].netFlixRating)maxsup = mvs[i].netFlixRating;
+			}
+ */
 			//Support range
 			var minsup:Number = 1e7;
 			var maxsup:Number = -1;
@@ -112,6 +126,7 @@ package
 				if(minsup > mvs[i].score)minsup = mvs[i].score;
 				if(maxsup < mvs[i].score)maxsup = mvs[i].score;
 			}
+
 			var genreArray:Array = new Array();
 			//Compute the genre score
 			for(i = 0; i < mvs.length; i++)
@@ -129,21 +144,43 @@ package
 			genreArray.sortOn("count",Array.NUMERIC | Array.DESCENDING);
 
 			//The main movie
-			var n1:MovieSprite = new MovieSprite(); n1.x = cx-offx; n1.y = cy-offy; data.addNode(n1);
-			n1.setRating((mvs[0].netFlixRating+1)/2); 
-			n1.renderer = movieRenderer; n1.addGenre(0);
-			n1.setTitle(mvs[0].movieName);
-			var movieId:int = mvs[0].id-1;
-			n1.setPoster("../../flix_images/"+movieId.toString()+".jpg");
+			var n1:MovieSprite = new MovieSprite(mvs[0],movieRenderer); n1.x = cx-offx; n1.y = cy-offy; data.addNode(n1); n1.addGenre(0);
 				
 			//Compute the number of Genre
+			var tot_count:int = 0; 
 			for(i = 0; i < 4; i++)
 				if((genreArray[0] as Keyword).count > 2.5*(genreArray[i] as Keyword).count)//Should be less than this
 					break;
+				else tot_count += (genreArray[i] as Keyword).count ; 
 			var numGenre:int = i;
+			var genrelayout:Vector.<sGenreLayout> = new Vector.<sGenreLayout>(numGenre);
+			for(i = 0; i < numGenre; i++)genrelayout[i] = new sGenreLayout();
+			var startpos:int = numGenre/2-0.5;
+			genrelayout[startpos].angle = 120; 
+			genrelayout[startpos].range = 360*(1.0*(genreArray[0] as Keyword).count/tot_count )/2; 
+			genrelayout[startpos].id = (genreArray[0] as Keyword).key;
 			
+			var left:int = startpos - 1;
+			var right:int = startpos + 1;
+			i = 1;
+			while ( i < numGenre )
+			{
+				genrelayout[right].id = (genreArray[i] as Keyword).key;
+				genrelayout[right].range = 360*(1.0*(genreArray[i] as Keyword).count/tot_count )/2;
+				genrelayout[right].angle = clampangle(genrelayout[right-1].angle + genrelayout[right-1].range + genrelayout[right].range);
+				right++;
+				i++;
+				if(i == numGenre ) break;
+				
+				genrelayout[left].id = (genreArray[i] as Keyword).key;
+				genrelayout[left].range = 360*(1.0*(genreArray[i] as Keyword).count/tot_count )/2;
+				genrelayout[left].angle = clampangle(genrelayout[left+1].angle -(genrelayout[left+1].range + genrelayout[left].range)); 
+				left--;
+				i++;
+			}
+						
 			//Layout the genre's 
-			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
+/* 			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(3);
 			var angleArr:Array = new Array(numGenre);angleArr[0]=60; angleArr[1]=180; angleArr[2]=-60;
 			for(var i:int; i < 3; i++)
 			{
@@ -154,16 +191,29 @@ package
 				r[i].data["title"]="Comedy";
 				r[i].alpha = 0;
 			}
-			
+ */			
+			var r:Vector.<MovieSprite> = new Vector.<MovieSprite>(numGenre);
+			for(var i:int; i < numGenre; i++)
+			{
+				r[i]=new MovieSprite(); r[i].fix(); data.addNode(r[i]);
+				r[i].angle2 = genrelayout[i].angle;r[i].size = 5; r[i].radial_distance = rad; 
+				r[i].x = cx+rad*Math.cos(r[i].angle2/180*Math.PI);
+				r[i].y = cy+rad*Math.sin(r[i].angle2/180*Math.PI);
+				r[i].data["title"]="Comedy";
+				r[i].alpha = 0;
+			}
+
 			var movieArray:Array = new Array(20);
 			
 			for(i = 1; i < 80 && i < mvs.length; i++)
 			{
-				var n:MovieSprite = new MovieSprite(); 
+				var n:MovieSprite = new MovieSprite(mvs[i], movieRenderer); 
+				var layout:sGenreLayout  = n.selectGenre(genrelayout); 
+				if(layout.id == -1)//this movie had no common genre what a retard 
+					layout = genrelayout[(int)(0.5+Math.random()*(numGenre-1))];//place them randomly
 				movieArray[i] = n;
-				data.addNode(n);n.rating = (mvs[i].netFlixRating+1)/2;
-				n.renderer = movieRenderer; 
-				var a:Array = new Array(3);
+				data.addNode(n);
+				/* var a:Array = new Array(3);
 				var b:Array = new Array(3);
 				
  				for(j = 0; j < 3; j++){
@@ -190,14 +240,15 @@ package
 				if(n.angle2 == 0)if(Math.abs(angleArr[j]) > 90)n.angle2 = 180;
 				}}
 				n.radial_distance = Math.random()*150+rad-150; 
-				
+				 */
 				if(1)// && i > 0)
 				{
 					n.radial_distance = (minsup-mvs[i].score)/(maxsup-minsup)*200+rad; 
 					var bAdded:Boolean = false;
-					var angle:Number = 60;
+					var range:Number = layout.range;
+					n.angle2 = layout.angle;
 					var step:Number = 2;
-					for(j = 0; j < angle; j+=step)
+					for(j = 0; j < range; j+=step)
 					{
 						var bintersects:Boolean = false;
 						for(var sign:int = -1; sign<=1 && bAdded == false; sign+=2)
@@ -235,9 +286,6 @@ package
 				n.x=cx-offy+n.radial_distance*Math.cos(n.angle2*Math.PI/180);
 				n.y=cy-offy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
 				//n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
-				n.setTitle(mvs[i].movieName);
-				var movieId:int = mvs[i].id-1;
-				n.setPoster("../../flix_images/"+movieId.toString()+".jpg");
 			}
 		}
 		public function init():void

@@ -79,7 +79,7 @@ package MainInfo
       		
       	}
       	
-      	private function setMovie(mov:Movie):void{
+      	public function setMovie(mov:Movie):void{
       		movie = mov;
       		
       	}
