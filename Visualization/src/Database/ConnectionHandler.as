@@ -10,7 +10,7 @@ package Database
 	import flash.xml.XMLNode;
 	//import mx.controls.Alert;
 	
-	public class ConnectionHandler extends Sprite
+	public class ConnectionHandler
 	{
 
 		
@@ -36,7 +36,7 @@ package Database
 		private var searchMenu:SearchMenu = null; 
 		private var suggestionData:SuggestionHandler = null;
 		
-		public var waitingForData:Boolean = false;
+		public var waitingForData:Boolean = false, firstTime:Boolean = true;
 		
 		public function ConnectionHandler(ipAddr:String, port:int, suggestionData:SuggestionHandler)
 		{
@@ -99,6 +99,11 @@ package Database
 				 Connected = false;
 				 trace("Error connecting to " + AppIPAddr );
 			 }
+			 
+			 if(firstTime)
+			  	findSimilar(Math.round(Math.random()*17769 + 1));
+			  	
+			  firstTime = false;
 		 }
 		 
 		 // On recieve of command
@@ -108,6 +113,9 @@ package Database
 			  retDoc = retDoc.substr(retDoc.indexOf("<"),retDoc.length - 2 - retDoc.indexOf("<"));
 			  var doc:XMLDocument = new XMLDocument( retDoc );
 			  ParseReturn( doc );
+			  
+			  
+			  
 		  }
 		  
 		 // Sending different xml commands --------------------------------------------------

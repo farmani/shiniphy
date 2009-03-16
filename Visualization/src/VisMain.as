@@ -10,10 +10,13 @@ package {
 	
 	import flare.vis.data.MovieSprite;
 	
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.net.URLRequest;
 	import flash.system.Security;
 
 	[SWF(width="1500", height="1000", backgroundColor="#ffffff", frameRate="30")]
@@ -26,6 +29,7 @@ package {
 		private var movieVis:MovieVis;
 		private var infoBox:InfoBox;
 		private var filterHandler:FilterHandler;
+		private var backgroundImg:Loader;
 		
 		public function VisMain()
 		{
@@ -37,6 +41,13 @@ package {
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			// things are drawn from the top left
 			this.stage.align = StageAlign.TOP_LEFT;
+			
+			
+			//this.visible = false;
+			var urlRequest:URLRequest = new URLRequest("../images/background.png");
+			backgroundImg = new Loader( );
+			backgroundImg.contentLoaderInfo.addEventListener(Event.COMPLETE, setLoaded );
+			backgroundImg.load( urlRequest );
 			
 			
 			var host:String = "127.0.0.1";
@@ -56,19 +67,19 @@ package {
 			movieVis.init();
 			movieVis.play();
 			
+			filterHandler.y = 110;
+			
 			filterHandler.init(dataHandler);
 			// ./act -h 174.129.187.48 -U psi -w pass19wd -d psi
 			//conn.setUpDatabase("174.129.187.48", "psi", "pass19wd", "psi");
 			conn.Connect();
 			
 			searchMenu = new SearchMenu(conn);
-			searchMenu.x = 225;
-			searchMenu.y = 10;
+			searchMenu.x = 260;
+			searchMenu.y = 25;
 			
-			
-
-var aa:int = 1.3;
-aa = 1.7;
+			movieVis.y = 50;
+			movieVis.x = 30;
 			
 			// make sure to add in right order so that search dropdown is on top
 			
@@ -87,6 +98,13 @@ aa = 1.7;
 			
 			searchMenu.mouseDown(e);
 			
-		}		
+		}
+		
+		private function setLoaded (e:Event):void{
+      	
+      		this.addChild(backgroundImg);
+      		setChildIndex(backgroundImg, 0);
+      		
+      	}
 	}
 }

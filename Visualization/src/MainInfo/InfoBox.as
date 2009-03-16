@@ -11,6 +11,7 @@ package MainInfo
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 
 	public class InfoBox extends Sprite
 	{
@@ -21,11 +22,18 @@ package MainInfo
 		private var bkSprite:Sprite = null;
 		private var movie:Movie;
 		
+		public var font:TextFormat;
+		
 		public function InfoBox()
 		{
 			this.x = 600;
 			this.y = 400;
 			movie = null;
+			
+			font = new TextFormat();
+			font.align = "left";
+			font.size = 12;
+			font.font = "Calibri";
 			
 			//this.visible = false;
 			var urlRequest:URLRequest = new URLRequest("../images/mainInfo.png");
@@ -43,7 +51,10 @@ package MainInfo
 			info.wordWrap = true;
 			info.textField.border = false;
 			info.setStyle("upSkin",Sprite);
-			
+			info.setStyle("info", font);
+			info.textField.setTextFormat(font);
+			info.textField.defaultTextFormat = font;
+		
 			
 			info.htmlText = "a";
 			
@@ -57,7 +68,7 @@ package MainInfo
 			whyBox.multiline = true;
 			//info.border = true;
 			whyBox.wordWrap = true;
-			
+			whyBox.defaultTextFormat = font;
 			
 			
 			addChild(whyBox);
@@ -78,12 +89,12 @@ package MainInfo
       		
       		if(mov.score < 10000){
       		
-      		whyBox.text = "Why this movie? We base it on the following:\n" + 
-					+ Math.round(100*mov.similarRatingScore) + "% Others ratings\n" + 
-					+ Math.round(100*mov.directorScore) + "% Director\n" + 
-					+ Math.round(100*mov.genreScore) + "% Genre\n" + 
-					+ Math.round(100*mov.keywordScore) + "% Keywords\n" + 
-					+ Math.round(100*mov.yearScore) + "% Year\n";
+      		whyBox.text = "We based this recommendation on the following:\n" + 
+					+ Math.round(100*mov.similarRatingScore) + "% user ratings\n" + 
+					+ Math.round(100*mov.directorScore) + "% director\n" + 
+					+ Math.round(100*mov.genreScore) + "% genres\n" + 
+					+ Math.round(100*mov.keywordScore) + "% keywords\n" + 
+					+ Math.round(100*mov.yearScore) + "% time period\n";
 					
       		}else{
       			whyBox.text = "";
@@ -91,7 +102,8 @@ package MainInfo
       		
       		if(mov.id > 1){
       			
-      			info.text = mov.movieName + "\nScore on netflix: " + mov.netFlixRating + "\nUsers who have seen it: " + mov.support + "\n\n";
+      			info.text = mov.movieName + "(" + mov.year + ")\nScore on netflix: " + 
+      						mov.netFlixRating + "\nNumber of users who have seen it: " + mov.support + "\n\n";
       			
       			
 	      		var url:String = "../../htmlinfos/info(" + (mov.id - 1) +")";
@@ -99,7 +111,7 @@ package MainInfo
 				loadit.addEventListener(Event.COMPLETE, completeHandler);
 				loadit.load(new URLRequest(url));
       		}else{
-      			info.htmlText = "Error movie not found in html info database";
+      			//info.htmlText = "Error movie not found in html info database";
       		}
 			
       		

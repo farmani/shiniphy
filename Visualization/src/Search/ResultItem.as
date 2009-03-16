@@ -11,7 +11,7 @@ package Search
 		
 		
 		
-		private var id:int;
+		public var id:int;
 		private var dist:int;
 		private var pos:int;
 		
