@@ -69,6 +69,8 @@ package Database
 			
 			
 			var mov:Movie;
+			var filterRatings:Array = new Array();
+			filterRatings[1] = 0;filterRatings[2] = 0;filterRatings[3] = 0;filterRatings[4] = 0;filterRatings[0] = 0;
 			
 			xnode = xnode.firstChild;
 			while( xnode != null ){
@@ -94,18 +96,21 @@ package Database
 						
 					}
 					
+					if(mov.netFlixRating >0 && mov.netFlixRating < 6){
+						filterRatings[mov.netFlixRating - 1]++;
+					}
+					
 					for each(key in mov.genres){
 						genres[key].count++;
 					}
 
-					
 					movies.push(mov);
 
 				}
 				xnode = xnode.nextSibling;
 			}
 			
-			keywords.sortOn("count",Array.NUMERIC | Array.DESCENDING);
+			//keywords.sortOn("count",Array.NUMERIC | Array.DESCENDING);
 			keywords.length = 10;
 			
 			i = 0;
@@ -127,6 +132,7 @@ package Database
 				}
 			}
 			filters.setYears(yearArr);
+			filters.setRatings(filterRatings);
 			movieVis.processData(movies);
 			
 		}
@@ -218,7 +224,7 @@ package Database
 				}				
 			}
 			
-			
+			movieVis.init();
 			
 		}	
 	}
