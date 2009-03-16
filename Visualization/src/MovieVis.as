@@ -20,18 +20,19 @@ package
 	import flare.vis.operator.layout.ForceDirectedLayout2;
 	
 	import Database.Movie;
-	//import Database.Movie;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	import flash.display.Graphics;
 	public class MovieVis extends Sprite
 	{
+		//import Database.Movie;
 		private var vis:flare.vis.Visualization;
 		private var movieRenderer:MovieRenderer = new MovieRenderer(); 
 		private var opt:Array;
 		private var idx:int = -1;
-		private var rad:Number = 400;
-		private var cx:Number = 400;
-		private var cy:Number = 400;
+		public static  var rad:Number = 400;
+		public static  var cx:Number = 400;
+		public static  var cy:Number = 400;
 		private var data:Data = new Data();
 		
 		public function MovieVis(ibox:InfoBox)
@@ -40,6 +41,35 @@ package
 			ibox.visible = false;
 		}
 		
+		//bitwise conversion of rgb color to a hex value
+		public static function rgb2hex(r:int, g:int, b:int):Number {
+		    return(r<<16 | g<<8 | b);
+		}
+		//bitwise conversion of a hex color into rgb values
+		public static function hex2rgb(hex:int):Object{
+		    var red:int = hex>>16;
+		    var greenBlue:int = hex-(red<<16)
+		    var green:int = greenBlue>>8;
+		    var blue:int = greenBlue - (green << 8);
+		  //trace("r: " + red + " g: " + green + " b: " + blue);
+		    return({r:red, g:green, b:blue});
+		}
+		
+		public static function drawCircle(g:Graphics, x:Number, y:Number, radius:Number, fillColor:Number, fillAlpha:Number=1):void {
+	        g.lineStyle(1, fillColor, fillAlpha);
+    		g.beginFill(0, 0); 
+	        g.moveTo(x + radius, y);
+	        g.curveTo(radius + x, Math.tan(Math.PI / 8) * radius + y, Math.sin(Math.PI / 4) * radius + x, Math.sin(Math.PI / 4) * radius + y);
+	        g.curveTo(Math.tan(Math.PI / 8) * radius + x, radius + y, x, radius + y);
+	        g.curveTo(-Math.tan(Math.PI / 8) * radius + x, radius+ y, -Math.sin(Math.PI / 4) * radius + x, Math.sin(Math.PI / 4) * radius + y);
+	        g.curveTo(-radius + x, Math.tan(Math.PI / 8) * radius + y, -radius + x, y);
+	        g.curveTo(-radius + x, -Math.tan(Math.PI / 8) * radius + y, -Math.sin(Math.PI / 4) * radius + x, -Math.sin(Math.PI / 4) * radius + y);
+	        g.curveTo(-Math.tan(Math.PI / 8) * radius + x, -radius + y, x, -radius + y);
+	        g.curveTo(Math.tan(Math.PI / 8) * radius + x, -radius + y, Math.sin(Math.PI / 4) * radius + x, -Math.sin(Math.PI / 4) * radius + y);
+	        g.curveTo(radius + x, -Math.tan(Math.PI / 8) * radius + y, radius + x, y);
+	        g.endFill();
+		}
+
 		public static function mapGenre(g:int):int
 		{
 			switch(g)
@@ -163,7 +193,7 @@ package
 							n.y=cy+n.radial_distance*Math.sin(t*Math.PI/180);
 							for(var k:int = 0; k < i;k++)
 							{
-								if(movieArray[k] != null && rectIntersect(n, movieArray[k],75,75)==true)
+								if(movieArray[k] != null && rectIntersect(n, movieArray[k],150,150)==true)
 								{
 									bintersects = true;
 									break;
@@ -344,10 +374,10 @@ package
 		}
 	   private function rectIntersect(pi:MovieSprite, pj:MovieSprite,dimx:int=60, dimy:int=70):Boolean
 	   {
-			if(pi.y+dimy < pj.y-dimy)	return false;
-			if(pi.y-dimy > pj.y+dimy)	return false;
-			if(pi.x+dimx < pj.x-dimx)	return false;
-			if(pi.x-dimx > pj.x+dimx)	return false;
+			if(pi.y+dimy < pj.y)	return false;
+			if(pi.y > pj.y+dimy)	return false;
+			if(pi.x+dimx < pj.x)	return false;
+			if(pi.x > pj.x+dimx)	return false;
 			return true;
 		}
 		/**
