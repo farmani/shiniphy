@@ -8,6 +8,7 @@ package MainInfo
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.text.TextField;
 
@@ -41,6 +42,7 @@ package MainInfo
 			info.wordWrap = true;
 			info.textField.border = false;
 			info.setStyle("upSkin",Sprite);
+			
 			
 			info.htmlText = "a";
 			
@@ -82,7 +84,21 @@ package MainInfo
       	public function setMovie(mov:Movie):void{
       		movie = mov;
       		
+      		if(mov.id > 1){
+	      		var url:String = "../../htmlinfos/info(" + (mov.id - 1) +")";
+				var loadit:URLLoader = new URLLoader();
+				loadit.addEventListener(Event.COMPLETE, completeHandler);
+				loadit.load(new URLRequest(url));
+      		}else{
+      			info.htmlText = "Error movie not found in html info database";
+      		}
+			
+      		
       	}
+      	
+      	private function completeHandler(event:Event):void {
+			info.htmlText = event.target.data as String;	
+		}
       	
       	public function setBackgroundImage(s:Sprite):void
       	{

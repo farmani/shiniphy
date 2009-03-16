@@ -103,6 +103,9 @@ package Database
 					
 					if(mov.netFlixRating >0 && mov.netFlixRating < 6){
 						filterRatings[mov.netFlixRating - 1]++;
+					}else{
+						mov.netFlixRating = 3;
+						filterRatings[mov.netFlixRating - 1]++;
 					}
 					
 					for each(key in mov.genres){
@@ -205,7 +208,7 @@ package Database
 					
 					mov.filtered = true;
 					continue;
-				}else if(mov.support < filterPopularityMin-1){
+				}else if(mov.netFlixRating < filterPopularityMin){
 					
 					mov.filtered = true;
 					continue;
