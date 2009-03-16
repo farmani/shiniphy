@@ -14,7 +14,8 @@ package Database
 		
 		// filter stuff
 		private var keywords:Array;
-		private var genres:Vector.<Genre>;
+		private var genres:Array;
+		private var genresFiltered:Array;
 		private var years:Dictionary;
 		
 		
@@ -26,6 +27,8 @@ package Database
 		
 		private var movieVis:MovieVis = null;
 		
+		private var conn:ConnectionHandler = null;
+		
 		public function SuggestionHandler(mv:MovieVis, filters:FilterHandler)
 		{
 			this.filters = filters;
@@ -33,21 +36,20 @@ package Database
 			movies = new Vector.<Movie>();
 			
 			// set up filter params
-			genres = new Vector.<Genre>(29);
+			genres = new Array();
+			genresFiltered = new Array();
 			keywords = new Array();
 			years = new Dictionary();
 			
-			for(var i:int=0;i<29;++i){
-				genres[i] = new Genre();
-			}
+			
 
 		}
 		
-		public function newSimilarSet(xnode:XMLNode):void{
+		public function newSimilarSet(xnode:XMLNode, conn:ConnectionHandler):void{
 
+			this.conn = conn;
+			
 			filters.reset();
-
-			movies.length = 0;
 
 			var val:String;
 			var key:int;
@@ -62,9 +64,9 @@ package Database
 			//	delete keywords[val];
 			//}
 			
-			for(var i:int=0;i<genres.length;++i){
-				genres[i].count = 1;
-				genres[i].filtered = false;
+			for(var i:int=0;i<8;++i){
+				genres[i] = 0;
+				genresFiltered[i] = false;
 			}
 			
 			
@@ -83,7 +85,7 @@ package Database
 					}else{
 						years[mov.year]++;
 					}
-					
+					/*
 					for each (key in mov.keywords){
 						if(keywords[key] == null)
 						{
@@ -95,13 +97,14 @@ package Database
 						}
 						
 					}
+					*/
 					
 					if(mov.netFlixRating >0 && mov.netFlixRating < 6){
 						filterRatings[mov.netFlixRating - 1]++;
 					}
 					
 					for each(key in mov.genres){
-						genres[key].count++;
+						genres[MovieVis.mapGenre(key)]++;
 					}
 
 					movies.push(mov);
@@ -131,8 +134,11 @@ package Database
 				
 				}
 			}
+
+			
 			filters.setYears(yearArr);
 			filters.setRatings(filterRatings);
+			filters.setGenres(genres);
 			movieVis.processData(movies);
 			
 		}
@@ -151,18 +157,21 @@ package Database
 		
         public function filterOnGenre(id:int, filter:Boolean):void{
         	
-        	var tmp:Genre = genres[id];
-			
-			
-			if(tmp != null){
-				
-				tmp.filtered = filter;
-				updateFiltering();
-        		
-			}
+        	genresFiltered[id] = true;
+			updateFiltering();
+
         	
         	
         }
+        
+        public function fuzzyFilterGenre(boost:Number):void{
+        	
+			if(conn != null){
+				conn.genreBoost = boost;
+				conn.filterUpdateSimilar();
+			}
+        }
+        
         public function filterOnYear(start:int, end:int):void{
         	
         	filterYearStart = start;
@@ -202,13 +211,13 @@ package Database
 				}else if(mov.genres.length > 0) {
 					
 					for each (key in mov.genres){
-						if(genres[key].filtered)
+						if(genres[MovieVis.mapGenre(key)].filtered)
 							mov.filtered = true;
 
 					}
 					
 					continue;
-				}else if(mov.keywords.length > 0) {
+				/*}else if(mov.keywords.length > 0) {
 					
 					for each (key in mov.keywords){
 						for each (filterKey in keywords){
@@ -218,7 +227,7 @@ package Database
 							}
 						}
 					}
-					continue;
+					continue; */
 				}else{
 					mov.filtered = false;
 				}				

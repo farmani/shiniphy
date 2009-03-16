@@ -28,6 +28,9 @@ package Database
 		private var HConnection:Number = -1; // connection handle
 		private var port:Number = -1;
 		
+		// some filtering boosting
+		public var genreBoost:Number = 1.0;
+		
 		private var outgoingData:String = "<policy-file-request/>\n";
 		
 		private var searchMenu:SearchMenu = null; 
@@ -50,6 +53,21 @@ package Database
 			this.suggestionData = suggestionData;
 			
 			var egon:Number = 0;
+		}
+		
+		public function filterUpdateSimilar():void{
+			
+			if( Connected){// && HConnection != -1 ){
+				outgoingData = XMLCreateSimilar();
+				waitingForData = true;
+				
+				if( XMLSck.connect( AppIPAddr, port ) == false ){
+					  trace( "Not connected." ); 
+				}
+			}else{
+				  trace("Not connected." );
+			}
+			
 		}
 		
 		// establish connection with server
@@ -198,6 +216,11 @@ package Database
 		   node1.appendChild( node2 );
 		   node3 = xmlDoc.createTextNode( similarId );
 		   node2.appendChild( node3 );
+		   
+		   node2 = xmlDoc.createElement( "genreBoost" );
+		   node1.appendChild( node2 );
+		   node3 = xmlDoc.createTextNode( genreBoost.toString() );
+		   node2.appendChild( node3 );
 		
 		   
 		   var s:String = xmlDoc.toString() + "\n"; // \n required by Java sockets
@@ -217,7 +240,7 @@ package Database
 				
 							
 			}else if(xnode.nodeName == "Similar"){
-				suggestionData.newSimilarSet(xnode);
+				suggestionData.newSimilarSet(xnode, this);
 				
 			}
 		 }

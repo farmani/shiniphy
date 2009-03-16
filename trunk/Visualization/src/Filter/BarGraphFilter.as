@@ -16,8 +16,8 @@ package Filter
 		
 		//private var _fmt:TextFormat = new TextFormat("Helvetica,Arial",18,0,true,false);
 	    private var lastVisitDateSlider:Slider;
-	    private var yearSlider:Slider;
-	    private var yearSlider2:Slider;
+	    public var yearSlider:Slider;
+	    public var yearSlider2:Slider;
 	    private var myParent:FilterHandler;
 	    
 	    public var mainHeight:Number;
