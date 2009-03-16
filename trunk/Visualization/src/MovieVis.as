@@ -243,6 +243,9 @@ package
 			
 			for(i = 1; i < 80 && i < mvs.length; i++)
 			{
+				if(mvs[i].filtered)
+					continue;
+				
 				var n:MovieSprite = new MovieSprite(mvs[i], movieRenderer); 
 				var layout:sGenreLayout  = n.selectGenre(genrelayout); 
 				if(layout.id == -1)//this movie had no common genre what a retard 
