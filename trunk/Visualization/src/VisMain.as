@@ -63,8 +63,8 @@ package {
 			conn.Connect();
 			
 			searchMenu = new SearchMenu(conn);
-			searchMenu.x = 125;
-			searchMenu.y = 20;
+			searchMenu.x = 225;
+			searchMenu.y = 10;
 			
 			
 

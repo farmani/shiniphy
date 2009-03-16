@@ -8,6 +8,7 @@ package flare.vis.data
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.BlendMode;
 	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -183,11 +184,12 @@ package flare.vis.data
 			if(label == null)
 			{
 				label= new Label();
-				label.autoSize = TextFieldAutoSize.CENTER;
+				label.blendMode = BlendMode.OVERLAY;
+				//label.autoSize = TextFieldAutoSize.CENTER;
 				label.width = 100;     
-				label.height = 0;     
+				label.height = 15;     
 				label.x = 0;     
-				label.y = posterLoader.height - label.height;     
+				label.y = posterh - label.height;     
 				addChild(label); 
 			}
 			label.text = s;

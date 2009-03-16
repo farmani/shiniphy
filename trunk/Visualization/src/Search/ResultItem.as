@@ -51,9 +51,7 @@ package Search
 			this.addEventListener(MouseEvent.MOUSE_OVER, mouseIn);
 			this.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
 			
-			graphics.beginFill(0xFFFFFF);
-			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
-			graphics.endFill();
+			graphics.clear();
 		}
 		
 		public function mouseDown(evt:MouseEvent):void{
@@ -64,7 +62,7 @@ package Search
 		
 		public function mouseIn(evt:MouseEvent):void{
 			
-			graphics.beginFill(0x9999AA);
+			graphics.beginFill(0x9999AA,0.5);
 			graphics.drawRect(0,trueHeight*pos,width,trueHeight);
 			graphics.endFill();
 			
