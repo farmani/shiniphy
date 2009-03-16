@@ -3,9 +3,10 @@ package
 	import Database.Keyword;
 	
 	import MainInfo.InfoBox;
-	
+	import Database.Movie;
 	import __AS3__.vec.Vector;
-	
+	import Database.Movie;
+		
 	import flare.HoverControl2;
 	import flare.util.Shapes;
 	import flare.vis.Visualization;
@@ -19,18 +20,18 @@ package
 	import flare.vis.operator.encoder.PropertyEncoder;
 	import flare.vis.operator.layout.ForceDirectedLayout2;
 	
-	import Database.Movie;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	import flash.display.Graphics;
 	public class MovieVis extends Sprite
 	{
-		//import Database.Movie;
+	//import Database.Movie;
+		
 		private var vis:flare.vis.Visualization;
 		private var movieRenderer:MovieRenderer = new MovieRenderer(); 
 		private var opt:Array;
 		private var idx:int = -1;
-		public static  var rad:Number = 400;
+		public static  var rad:Number = 350;
 		public static  var cx:Number = 400;
 		public static  var cy:Number = 400;
 		private var data:Data = new Data();
@@ -39,6 +40,16 @@ package
 		{
 			MovieSprite.infoBox = ibox;
 			ibox.visible = false;
+		/* 88,184,214
+144,194,210
+218,226,228 */
+
+			var circles:Sprite = new Sprite();
+			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*1/3,MovieVis.rgb2hex(88,184,214));
+			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*2/3,MovieVis.rgb2hex(144,194,210));
+			MovieVis.drawCircle(circles.graphics,MovieVis.cx,MovieVis.cy, MovieVis.rad*3/3,MovieVis.rgb2hex(218,226,228));
+			this.addChild(circles);
+	
 		}
 		
 		//bitwise conversion of rgb color to a hex value
@@ -90,19 +101,22 @@ package
 		{
 			data.nodes.clear();
 			
+			var i:int, j:int;
+			var offx:int = (MovieSprite.iconw+MovieSprite.posterw+MovieSprite.starw)/2;
+			var offy:int = (MovieSprite.posterh)/2;
 			//Support range
 			var minsup:Number = 1e7;
 			var maxsup:Number = -1;
-			for(var i:int = 1; i < mvs.length; i++)
+			for(i = 1; i < mvs.length; i++)
 			{
 				if(minsup > mvs[i].score)minsup = mvs[i].score;
 				if(maxsup < mvs[i].score)maxsup = mvs[i].score;
 			}
 			var genreArray:Array = new Array();
 			//Compute the genre score
-			for(var i:int = 0; i < mvs.length; i++)
+			for(i = 0; i < mvs.length; i++)
 			{
-				for(var j:int = 0; j < mvs[i].genres.length; j++)
+				for(j = 0; j < mvs[i].genres.length; j++)
 				{
 					var map:int = mapGenre(mvs[i].genres[j]);
 						if(genreArray[map] == null)
@@ -115,14 +129,15 @@ package
 			genreArray.sortOn("count",Array.NUMERIC | Array.DESCENDING);
 
 			//The main movie
-			var n1:MovieSprite = new MovieSprite(); n1.x = cx; n1.y = cy; data.addNode(n1);
+			var n1:MovieSprite = new MovieSprite(); n1.x = cx-offx; n1.y = cy-offy; data.addNode(n1);
 			n1.setRating((mvs[0].netFlixRating+1)/2); 
-			n1.addGenre(0);
+			n1.renderer = movieRenderer; n1.addGenre(0);
+			n1.setTitle(mvs[0].movieName);
 			var movieId:int = mvs[0].id-1;
 			n1.setPoster("../../flix_images/"+movieId.toString()+".jpg");
 				
 			//Compute the number of Genre
-			for(var i:int = 0; i < 4; i++)
+			for(i = 0; i < 4; i++)
 				if((genreArray[0] as Keyword).count > 2.5*(genreArray[i] as Keyword).count)//Should be less than this
 					break;
 			var numGenre:int = i;
@@ -141,7 +156,6 @@ package
 			}
 			
 			var movieArray:Array = new Array(20);
-			var j:int;
 			
 			for(i = 1; i < 80 && i < mvs.length; i++)
 			{
@@ -179,7 +193,7 @@ package
 				
 				if(1)// && i > 0)
 				{
-					n.radial_distance = (minsup-mvs[i].score)/(maxsup-minsup)*150+rad; 
+					n.radial_distance = (minsup-mvs[i].score)/(maxsup-minsup)*200+rad; 
 					var bAdded:Boolean = false;
 					var angle:Number = 60;
 					var step:Number = 2;
@@ -189,11 +203,11 @@ package
 						for(var sign:int = -1; sign<=1 && bAdded == false; sign+=2)
 						{
 							var t:Number = n.angle2+j*sign;
-							n.x=cx+n.radial_distance*Math.cos(t*Math.PI/180);
-							n.y=cy+n.radial_distance*Math.sin(t*Math.PI/180);
+							n.x=cx-offx+n.radial_distance*Math.cos(t*Math.PI/180);
+							n.y=cy-offy+n.radial_distance*Math.sin(t*Math.PI/180);
 							for(var k:int = 0; k < i;k++)
 							{
-								if(movieArray[k] != null && rectIntersect(n, movieArray[k],150,150)==true)
+								if(movieArray[k] != null && rectIntersect(n, movieArray[k],offx,offy)==true)
 								{
 									bintersects = true;
 									break;
@@ -218,8 +232,8 @@ package
 				//if(i == 0){n.radial_distance = 362; n.angle2 = -60;}
 				//n.angle2 = (i-10)*18; n.radial_distance = rad; 
 					
-				n.x=cx+n.radial_distance*Math.cos(n.angle2*Math.PI/180);
-				n.y=cy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
+				n.x=cx-offy+n.radial_distance*Math.cos(n.angle2*Math.PI/180);
+				n.y=cy-offy+n.radial_distance*Math.sin(n.angle2*Math.PI/180);
 				//n.setTitle(((int)(n.radial_distance)).toString()+","+((int)(n.angle2)).toString());
 				n.setTitle(mvs[i].movieName);
 				var movieId:int = mvs[i].id-1;
@@ -374,10 +388,10 @@ package
 		}
 	   private function rectIntersect(pi:MovieSprite, pj:MovieSprite,dimx:int=60, dimy:int=70):Boolean
 	   {
-			if(pi.y+dimy < pj.y)	return false;
-			if(pi.y > pj.y+dimy)	return false;
-			if(pi.x+dimx < pj.x)	return false;
-			if(pi.x > pj.x+dimx)	return false;
+			if(pi.y+dimy < pj.y-dimy)	return false;
+			if(pi.y-dimy > pj.y+dimy)	return false;
+			if(pi.x+dimx < pj.x-dimx)	return false;
+			if(pi.x-dimx > pj.x+dimx)	return false;
 			return true;
 		}
 		/**

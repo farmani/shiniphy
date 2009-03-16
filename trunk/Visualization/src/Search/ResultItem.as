@@ -3,6 +3,7 @@ package Search
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	import flash.text.TextFormat;
 	import flash.text.TextFieldType;
 
 	public class ResultItem extends Sprite
@@ -31,13 +32,15 @@ package Search
 			nameField.x = 0;
 			nameField.y = trueHeight*pos;
 			nameField.height = 20;
-			nameField.width = 250;
+			nameField.width = parent.width;
 			nameField.background = false;
 			nameField.type = TextFieldType.DYNAMIC;
 			nameField.border = false;
 			nameField.text = name;
 			nameField.selectable = false;
-			
+			var tf1:TextFormat = new TextFormat();
+			tf1.font = "Calibri"; tf1.size = 16;
+			nameField.setTextFormat(tf1);
 			this.addChild(nameField);
 			
 			//graphics.beginFill(0xCCCCCC);
@@ -62,16 +65,13 @@ package Search
 		public function mouseIn(evt:MouseEvent):void{
 			
 			graphics.beginFill(0x9999AA);
-			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
+			graphics.drawRect(0,trueHeight*pos,width,trueHeight);
 			graphics.endFill();
 			
 		}
 		public function mouseOut(evt:MouseEvent):void{
 			
-			graphics.beginFill(0xFFFFFF);
-			graphics.drawRect(0,trueHeight*pos,250,trueHeight);
-			graphics.endFill();
-			
+			graphics.clear();
 		}
 	}
 }
