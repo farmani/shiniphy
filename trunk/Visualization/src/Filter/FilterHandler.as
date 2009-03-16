@@ -25,7 +25,7 @@ package Filter
 			
 			genreSlider = new Slider();
 			genreSlider.x = 1000;
-            genreSlider.y = 500;
+            genreSlider.y = 600;
             //genreSlider.snapInterval = 10;
             genreSlider.width = 250;
             genreSlider.minimum = -1;
@@ -38,10 +38,10 @@ package Filter
 			yearFilter.y = 100;
 			
 			ratingFilter.x = 1000;
-			ratingFilter.y = 250;
+			ratingFilter.y = 275;
 			
 			genreFilter.x = 1000;
-			genreFilter.y = 400;
+			genreFilter.y = 450;
 			
 			addChild(yearFilter);
 			addChild(ratingFilter);

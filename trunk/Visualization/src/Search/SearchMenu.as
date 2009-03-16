@@ -23,7 +23,7 @@ package Search
 		private var results:Sprite;
 		private var resultArea:ScrollPane;
 		
-		
+		private var findSimilarOnReturn:Boolean;
 			
 		public function SearchMenu(conn:ConnectionHandler)
 		{
@@ -31,7 +31,7 @@ package Search
 			
 			results = new Sprite();
 			resultArea = new ScrollPane();
-			
+			findSimilarOnReturn = false;
 			//  search
 			var bordery:int = 2;
 			var borderx:int = 5;
@@ -71,6 +71,9 @@ package Search
 			
 			searchBox.addEventListener(MouseEvent.CLICK, mouseDown);
 			
+			
+			
+			
 		}
 		
 		public function newSearch(xnode:XMLNode):void{
@@ -82,29 +85,40 @@ package Search
 			
 			//results = [];
 			
+			var firstId = -1;
 			
 			xnode = xnode.firstChild;
-				while( xnode != null ){
-					if( xnode.nodeName == "movie" ){
-						xnode = xnode.firstChild;
-						var id:int = parseInt(xnode.firstChild.nodeValue);
-						xnode = xnode.nextSibling;
-						var name:String = xnode.firstChild.nodeValue;
-						xnode = xnode.nextSibling;
-						var dist:int = parseInt(xnode.firstChild.nodeValue);
-						
-						addResult(id, name, dist);
-						
-						
-						xnode = xnode.parentNode;
-
+			while( xnode != null ){
+				if( xnode.nodeName == "movie" ){
+					xnode = xnode.firstChild;
+					var id:int = parseInt(xnode.firstChild.nodeValue);
+					if(firstId == -1){
+						firstId = id;
 					}
 					xnode = xnode.nextSibling;
+					var name:String = xnode.firstChild.nodeValue;
+					xnode = xnode.nextSibling;
+					var dist:int = parseInt(xnode.firstChild.nodeValue);
+					
+					addResult(id, name, dist);
+					
+					
+					xnode = xnode.parentNode;
+
 				}
-				
-				this.resultArea.update();
-				setChildIndex(resultArea,numChildren - 1);
-				setChildIndex(searchBox,numChildren - 1);
+				xnode = xnode.nextSibling;
+			}
+			
+			this.resultArea.update();
+			setChildIndex(resultArea,numChildren - 1);
+			setChildIndex(searchBox,numChildren - 1);
+			
+			
+			if(findSimilarOnReturn && firstId != -1){
+				performSimilaritySearch(firstId);
+			}
+			
+			findSimilarOnReturn = false;
 			
 		}
 		
@@ -153,8 +167,18 @@ package Search
 			if (conn.waitingForData || searchBox.text.length < 1) {
 				return;
 			}
+			
+			
 						
 			var keyString:String = String.fromCharCode(kevt.keyCode);
+			
+			if(kevt.keyCode == 13 && searchBox.text.length > 2){
+				findSimilarOnReturn = true;
+				conn.search(this, searchBox.text);
+				return;
+				
+			}
+			findSimilarOnReturn = false;
 
 			if(kevt.keyCode != 8 && keyString.length > 0){
 				conn.search(this, searchBox.text + keyString);
