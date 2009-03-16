@@ -4,6 +4,7 @@ package MainInfo
 	
 	import fl.controls.TextArea;
 	
+	import flash.display.Graphics;
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -21,6 +22,7 @@ package MainInfo
 		private var whyBox:TextField;
 		private var bkSprite:Sprite = null;
 		private var movie:Movie;
+		private var ratings:Sprite = new Sprite();
 		
 		public var font:TextFormat;
 		
@@ -61,9 +63,9 @@ package MainInfo
 			addChild(info);
 			
 			whyBox = new TextField();
-			whyBox.x = 406;
+			whyBox.x = 376;
 			whyBox.y = 232;
-			whyBox.width = 125;
+			whyBox.width = 315;
 			whyBox.height = 160;
 			whyBox.multiline = true;
 			//info.border = true;
@@ -71,7 +73,11 @@ package MainInfo
 			whyBox.defaultTextFormat = font;
 			
 			
+			ratings.x = whyBox.x;
+			ratings.y = whyBox.y;
+
 			addChild(whyBox);
+			addChild(ratings);
 			
 			this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
 			this.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
@@ -88,13 +94,28 @@ package MainInfo
       		movie = mov;
       		
       		if(mov.score < 10000){
-      		
-      		whyBox.text = "We based this recommendation on the following:\n" + 
-					+ Math.round(100*mov.similarRatingScore) + "% user ratings\n" + 
-					+ Math.round(100*mov.directorScore) + "% director\n" + 
-					+ Math.round(100*mov.genreScore) + "% genres\n" + 
-					+ Math.round(100*mov.keywordScore) + "% keywords\n" + 
-					+ Math.round(100*mov.yearScore) + "% time period\n";
+
+      		/*Graphics*/
+      		var g:Graphics = ratings.graphics;
+      		g.clear();
+      		g.beginFill(MovieVis.rgb2hex(144,194,210));
+      		var X:int = 150;
+      		var Y:int = 50;
+      		var ht:int = 8;
+      		var ht2:int = 14;
+      		var sc:Number = 0.7;
+      		g.drawRect(X-100*mov.similarRatingScore*sc,Y,100*mov.similarRatingScore*sc,ht); 
+      		g.drawRect(X-100*mov.directorScore*sc,Y+ht2,100*mov.directorScore*sc,ht); 
+      		g.drawRect(X-100*mov.genreScore*sc,Y+ht2*2,100*mov.genreScore*sc,ht); 
+      		g.drawRect(X-100*mov.keywordScore*sc,Y+ht2*3,100*mov.keywordScore*sc,ht); 
+      		g.drawRect(X-100*mov.yearScore*sc,Y+ht2*4,100*mov.yearScore*sc,ht); 
+      		g.endFill();
+      		whyBox.text = "Why this movie? \nWe base it on the following\n\n" + 
+					"Others ratings\n" + 
+					"Director\n" + 
+					"Genre\n" + 
+					"Keywords\n" + 
+					"Year\n";
 					
       		}else{
       			whyBox.text = "";
@@ -113,14 +134,20 @@ package MainInfo
       		}else{
       			//info.htmlText = "Error movie not found in html info database";
       		}
+			var tf1:TextFormat = new TextFormat();
+			tf1.font = "Calibri"; tf1.size = 12;
+			whyBox.setTextFormat(tf1);
 			
-      		
       	}
       	
       	private function completeHandler(event:Event):void {
 			var text:String = event.target.data as String;
 			
 			info.appendText(text.substring(text.indexOf("<p>") + 3, text.indexOf("</p>")));
+			var tf1:TextFormat = new TextFormat();
+			tf1.font = "Calibri"; tf1.size = 12;
+			info.textField.setTextFormat(tf1);
+			info.textField.defaultTextFormat = tf1;
 		}
       	
       	public function setBackgroundImage(s:Sprite):void

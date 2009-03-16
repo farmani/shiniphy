@@ -1,5 +1,6 @@
 package {
 	import Database.ConnectionHandler;
+	import Database.Movie;
 	import Database.SuggestionHandler;
 	
 	import Filter.FilterHandler;
@@ -18,6 +19,7 @@ package {
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.system.Security;
+	import flash.xml.XMLNode;
 
 	[SWF(width="1500", height="1000", backgroundColor="#ffffff", frameRate="30")]
 	
@@ -81,6 +83,9 @@ package {
 			movieVis.y = 50;
 			movieVis.x = 30;
 			
+			//infoBox.visible = true; var m:Movie = new Movie(new XMLNode(0,"0"));
+			//m.similarRatingScore= 0.1; m.directorScore=.2; m.genreScore=.4; m.keywordScore= .6; m.yearScore= 1; m.id=11;infoBox.setMovie(m);
+
 			// make sure to add in right order so that search dropdown is on top
 			
 			this.addChild(movieVis);
