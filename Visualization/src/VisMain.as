@@ -10,7 +10,6 @@ package {
 	
 	import flare.vis.data.MovieSprite;
 	
-	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -68,7 +67,8 @@ package {
 			
 			
 
-
+var aa:int = 1.3;
+aa = 1.7;
 			
 			// make sure to add in right order so that search dropdown is on top
 			
