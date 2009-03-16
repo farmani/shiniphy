@@ -115,7 +115,7 @@ package
 		private function createGenreTextField(id:int, angle:Number):TextField
 		{
 			var t:TextField = new TextField();
-			t.x = cx+1.3*rad*Math.cos(Math.PI/180*angle)-25;
+			t.x = cx+1.3*rad*Math.cos(Math.PI/180*angle)-35;
 			t.y = cy+1.3*rad*Math.sin(Math.PI/180*angle);
 			t.text = mapGenreIdToName(id);
 			t.selectable = false;
@@ -292,9 +292,9 @@ package
 					var step:Number = 2;
 					for(j = 0; j < range; j+=step)
 					{
-						var bintersects:Boolean = false;
 						for(var sign:int = -1; sign<=1 && bAdded == false; sign+=2)
 						{
+							var bintersects:Boolean = false;
 							var t:Number = n.angle2+j*sign;
 							n.x=cx-offx+n.radial_distance*Math.cos(t*Math.PI/180);
 							n.y=cy-offy+n.radial_distance*Math.sin(t*Math.PI/180);
