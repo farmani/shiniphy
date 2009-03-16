@@ -30,7 +30,7 @@ package Database
 		{
 			this.filters = filters;
 			movieVis = mv;
-			movies = new Vector.<Movie>(100);
+			movies = new Vector.<Movie>();
 			
 			// set up filter params
 			genres = new Vector.<Genre>(29);
@@ -108,6 +108,25 @@ package Database
 			keywords.sortOn("count",Array.NUMERIC | Array.DESCENDING);
 			keywords.length = 10;
 			
+			i = 0;
+			var yearArr:Array = new Array();
+			yearArr[0] = 0;
+			
+			for(var j:int=1820;j<2007;++j){
+				
+				if(j > 1950 && j % 10 == 0){
+					++i;
+					yearArr[i] = 0;
+				}	
+							
+				if(years[j] != null){
+				
+					yearArr[i] += years[j];
+				
+				
+				}
+			}
+			filters.setYears(yearArr);
 			movieVis.processData(movies);
 			
 		}

@@ -8,6 +8,9 @@ package Search
 
 	public class ResultItem extends Sprite
 	{
+		
+		
+		
 		private var id:int;
 		private var dist:int;
 		private var pos:int;
