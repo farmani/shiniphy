@@ -32,6 +32,7 @@ package flare.vis.data
 		public static var loadedCount:int = 0;
 		public static var infoBox:InfoBox;
 
+		public var IsMainMovie:Boolean = false;
 		public static var MAX_GENRE:int = 8;
 		public static var genreLoader:Vector.<Loader> = new Vector.<Loader>(MAX_GENRE);
 		public static var genreImage:Vector.<BitmapData> = new Vector.<BitmapData>(MAX_GENRE);
@@ -158,19 +159,22 @@ package flare.vis.data
 					drawImage(g,starImage,iconw+posterw,y*starh);
 			}
 			drawImage(g,posterImage,iconw,0); //draw poster
+			//Draw a gray rectangle for better readability
+			g.beginFill(0x7f7f7f,0.5);
+			g.drawRect(iconw,posterh-15,posterw,15);
+			g.endFill();
 			for(var i:int = 0 ; i < MAX_GENRE ; i++)
 				if(imageArray[i] == 1)
 					drawImage(g,genreImage[i],0,iconh*i); //draw genres
-			g.endFill();
 			if(isHover==true)
 			{
-				drawImage(g,closeImage,posterw,0);
+				if(IsMainMovie==false)drawImage(g,closeImage,posterw,0);
 				//drawImage(g,quesImage ,iconw*2,posterh-iconh);
 			}
 		}
 		protected function onRemoveMovie(event:MouseEvent):void
 		{
-			if(event.localX >=posterw && event.localX < posterw+iconw && event.localY < iconh)
+			if(event.localX >=posterw && event.localX < posterw+iconw && event.localY < iconh && IsMainMovie == false)
 			{
 				props.particle.die = true;
 				die = true;
