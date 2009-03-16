@@ -8,7 +8,7 @@ package Filter
 	{
 		
 		private var dataHandler:SuggestionHandler;
-		private var yearFilter:BarGraphFilter;
+		private var yearFilter:BarGraphFilter, ratingFilter:BarGraphFilter;
 		
 		public function FilterHandler()
 		{
@@ -16,19 +16,32 @@ package Filter
 			
 			yearFilter = new BarGraphFilter(this, 250,80);
 			
+			ratingFilter = new BarGraphFilter(this,250,80);
 			
 			
-			yearFilter.x = 50;
+			yearFilter.x = 1000;
 			yearFilter.y = 100;
 			
+			ratingFilter.x = 1000;
+			ratingFilter.y = 250;
+			
 			addChild(yearFilter);
+			addChild(ratingFilter);
 		}
 		
 		public function setYears(years:Array):void{
 			
 			var egon2:Array = new Array("-1960","1960s","1970s","1980s","1990s", "2000s");
 			
-			yearFilter.setUp(years, egon2, 0.7, 200, 300, 200, true, 300);
+			yearFilter.setUp(years, egon2, 0.7, 1950, 2000, 1950, true, 2000);
+		}
+		
+		public function setRatings(ratings:Array):void{
+			
+			var egon2:Array = new Array("1 Star", "2 Star", "3 Star", "4 Star","5 Star");
+			
+			ratingFilter.setUp(ratings, egon2, .7, 1, 5, 1, false);
+			
 		}
 		
 		public function init(dataHandler:SuggestionHandler):void{
@@ -39,7 +52,11 @@ package Filter
 		
 		public function setFilterRange(min:int, max:int, filter:BarGraphFilter):void{
 			
-			dataHandler.filterOnYear(min,max);
+			if(filter == yearFilter){
+				dataHandler.filterOnYear(min,max);
+			}else if(filter == ratingFilter){
+				dataHandler.filterOnPopularity(min,max);
+			}
 			
 		}
 		

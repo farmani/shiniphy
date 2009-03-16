@@ -33,7 +33,7 @@ package Filter
         public var topVal:Number, barWidth:Number;
         public var snapInterval:int, max:int, min:int;
         
-        public var font:TextFormat;
+        public var font:TextFormat, fontx:TextFormat;
 
 		public function BarGraphFilter(myParent:FilterHandler, width:int, height:int)
 		{
@@ -63,6 +63,10 @@ package Filter
             font = new TextFormat();
 			font.align = "right";
 			font.font = "Calibri";
+			
+			fontx = new TextFormat();
+			fontx.align = "center";
+			fontx.font = "Calibri";
 
             var tmp:TextField;
             for(var i:int=0;i<5;++i){
@@ -124,7 +128,7 @@ package Filter
 			
 			
 			
-			if(slider1Val > slider2Val){
+			if(slider1Val > slider2Val && doubleSlider){
 				var tmp:int = slider1Val;
 				slider1Val = slider2Val;
 				slider2Val = tmp;
@@ -143,7 +147,7 @@ package Filter
 				yearSlider2.value = slider2Val; 
 				
 			}else{
-				yearSlider2.value = max; 
+				yearSlider2.value = slider2Val = max; 
 			}
                      
             
@@ -160,10 +164,10 @@ package Filter
             offSet = stepSize/2;
             snapInterval = (max-min)/(values.length - 1);
             
-            yearSlider.x = yearSlider2.x = offSet + 7;
+            yearSlider.x = yearSlider2.x = offSet*2*barWidth;
             yearSlider.width = yearSlider2.width = mainWidth - stepSize;
             yearSlider.snapInterval = yearSlider2.snapInterval = snapInterval;
-            
+
             
             graphics.lineStyle(2, 0, .75);
             graphics.moveTo(0,- .1 * mainHeight);
@@ -172,13 +176,13 @@ package Filter
 
             var i:int = 0;
             
-             graphics.lineStyle(1, 0, .1);
-            
+            graphics.lineStyle(1, 0, .1);
+            var txto:TextField;
             for(i = 0;i<5;++i){
-            	
-            	yTexts[i].text = (Math.round((topVal*(5-i)/5)*10)*.1).toPrecision(2);
-            	yTexts[i].x = -102;
-            	yTexts[i].y = i*mainHeight*.2 - 9;
+            	txto = yTexts[i];
+            	txto.text = (Math.round((topVal*(5-i)/5)*10)*.1).toPrecision(2);
+            	txto.x = -102;
+            	txto.y = i*mainHeight*.2 - 9;
             	            	
             	graphics.moveTo(1, i*mainHeight*.2);
             	graphics.lineTo(mainWidth + offSet, i*mainHeight*.2);
@@ -204,10 +208,11 @@ package Filter
             	}
             	xLabel = new TextField();
             	xLabel.text = labels[i];
-            	xLabel.defaultTextFormat = font;
-            	xLabel.x = i*stepSize + 10;
+            	xLabel.defaultTextFormat = fontx;
+            	xLabel.x = i*stepSize+offSet*barWidth;
             	xLabel.y = mainHeight*(1-val/topVal) - 20;
             	xLabel.height = 20;
+            	xLabel.selectable = false;
             	this.addChild(xLabel);
             	xTexts.push(xLabel);
             	
