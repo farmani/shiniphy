@@ -133,7 +133,9 @@ package
 		public function processData(mvs:Vector.<Movie>):void
 		{
 			if(GenreLabels != null)
+			try{
 				removeChild(GenreLabels);
+				}catch (error:Error){}
 			GenreLabels = new Sprite();
 			data.nodes.clear();
 			
@@ -242,7 +244,7 @@ package
 
 			var movieArray:Array = new Array(20);
 			
-			for(i = 1; i < 80 && i < mvs.length; i++)
+			for(i = 1; i < mvs.length; i++)
 			{
 				if(mvs[i].filtered)
 					continue;
@@ -306,9 +308,18 @@ package
 							}
 							if(bintersects == false)
 							{
+							//check if it doesnt intersect the infobox
+							/* if(!(
+							((n.y+offy*2 < MovieSprite.infoBox.y)== false) &&
+							((n.y > MovieSprite.infoBox.y+MovieSprite.infoBox.height)== false) &&
+							((n.x+offx*2 < MovieSprite.infoBox.x)== false) &&
+							((n.x > MovieSprite.infoBox.x+MovieSprite.infoBox.width)== false))) */
+							{
+							
 								bAdded = true; 
 								n.angle2 = t;
 								break;
+							}
 							}
 						}
 					}
@@ -477,10 +488,16 @@ package
 		}
 	   private function rectIntersect(pi:MovieSprite, pj:MovieSprite,dimx:int=60, dimy:int=70):Boolean
 	   {
-			if(pi.y+dimy < pj.y-dimy)	return false;
+/* 			if(pi.y+dimy < pj.y-dimy)	return false;
 			if(pi.y-dimy > pj.y+dimy)	return false;
 			if(pi.x+dimx < pj.x-dimx)	return false;
 			if(pi.x-dimx > pj.x+dimx)	return false;
+ */
+			if(pi.y+dimy*2 < pj.y)	return false;
+			if(pi.y> pj.y+dimy*2)	return false;
+			if(pi.x+dimx*2 < pj.x)	return false;
+			if(pi.x> pj.x+dimx*2)	return false;
+
 			return true;
 		}
 		/**

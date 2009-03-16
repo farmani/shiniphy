@@ -8,8 +8,8 @@ package Search
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	import flash.text.TextFormat;
 	import flash.text.TextFieldType;
+	import flash.text.TextFormat;
 	import flash.xml.XMLNode;
 
 
@@ -33,11 +33,13 @@ package Search
 			resultArea = new ScrollPane();
 			
 			//  search
+			var bordery:int = 2;
+			var borderx:int = 5;
 			searchBox = new TextField();
-			searchBox.height = 29;
-			searchBox.width = 330;
-			searchBox.x=searchBox.y=1; 
-			searchBox.background = false;
+			searchBox.height = 30-bordery;
+			searchBox.width = 331-borderx;
+			searchBox.x=borderx; searchBox.y=bordery; 
+			searchBox.background = true;
 			searchBox.type = TextFieldType.INPUT;
 			searchBox.border = false;
 			searchBox.addEventListener(KeyboardEvent.KEY_DOWN, updateSearch);
@@ -49,12 +51,12 @@ package Search
 			var circles:Sprite = new Sprite();
 			circles.graphics.lineStyle(1,MovieVis.rgb2hex(88,184,214));
 			circles.graphics.beginFill(0,0);
-			circles.graphics.drawRoundRect(searchBox.x-1,searchBox.y-1,searchBox.width+1,searchBox.height+1,10,10);
+			circles.graphics.drawRoundRect(searchBox.x-borderx,searchBox.y-bordery,searchBox.width+borderx*2,searchBox.height+bordery*2,10,10);
 			circles.graphics.endFill();
 			
-			resultArea.width = searchBox.width+1;
+			resultArea.width = searchBox.width+borderx;
 			resultArea.height = 120;
-			resultArea.y = searchBox.height+searchBox.y+1;
+			resultArea.y = searchBox.height+searchBox.y+bordery;
 			resultArea.x = searchBox.x;
 			//resultArea.horizontalScrollBar.visible = false;
 			resultArea.visible = false;
