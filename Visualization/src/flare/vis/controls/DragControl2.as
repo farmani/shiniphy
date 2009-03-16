@@ -3,6 +3,7 @@ package flare.vis.controls
 	import fl.controls.Label;
 	
 	import flare.vis.data.DataSprite;
+	import flare.vis.data.MovieSprite;
 	
 	import flash.display.InteractiveObject;
 	import flash.display.Loader;
@@ -64,7 +65,8 @@ package flare.vis.controls
 				else return;
 			}
 			if (s==null) return; // exit if not a sprite
-			if( s is DataSprite && (s as DataSprite).fixed == true)return;
+			if( s is DataSprite && (s as DataSprite).fixed == true )return;
+			if( s is MovieSprite && (s as MovieSprite).IsMainMovie == true )return;
 			
 			if (_filter==null || _filter(s)) {
 				_cur = s;

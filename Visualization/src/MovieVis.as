@@ -175,7 +175,8 @@ package
 			genreArray.sortOn("count",Array.NUMERIC | Array.DESCENDING);
 
 			//The main movie
-			var n1:MovieSprite = new MovieSprite(mvs[0],movieRenderer); n1.x = cx-offx; n1.y = cy-offy; data.addNode(n1); n1.addGenre(0);
+			var n1:MovieSprite = new MovieSprite(mvs[0],movieRenderer); n1.x = cx-offx; n1.y = cy-offy; data.addNode(n1); n1.addGenre(0); n1.IsMainMovie = true;
+			
 				
 			//Compute the number of Genre
 			var tot_count:int = 0; 
