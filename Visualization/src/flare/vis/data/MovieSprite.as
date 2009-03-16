@@ -18,7 +18,8 @@ package flare.vis.data
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
-	
+	import flash.text.TextFormat;
+
 	public class MovieSprite extends NodeSprite
 	{
 		public var angle2: Number;
@@ -254,6 +255,11 @@ package flare.vis.data
 				label.height = 15;     
 				label.x = iconw;     
 				label.y = posterh - 15;     
+				var tf1:TextFormat = new TextFormat();
+				tf1.font = "Arial"; tf1.size = 12;
+				//tf1.bold="true";
+				//label.wordWrap = true;
+				label.setStyle("textFormat", tf1);
 				addChild(label); 
 			}
 			label.text = s;
